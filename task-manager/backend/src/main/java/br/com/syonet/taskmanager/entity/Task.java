@@ -1,0 +1,21 @@
+package br.com.syonet.taskmanager.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Table(name = "tasks")
+@Data //cria automaticamente os getters e setters
+public class Task {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String titulo;
+    private String descricao;
+    private String status;
+    private String responsavel;
+    private boolean completo;
+}
