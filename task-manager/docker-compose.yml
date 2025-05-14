@@ -8,10 +8,17 @@ services:
       - 5432:5432
     environment:
       POSTGRES_DB: taskmanager
-      POSTGRES_USER: syonet
-      POSTGRES_PASSWORD: syonet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - taskmanager-net
 
   backend:
     build:
@@ -21,14 +28,15 @@ services:
       - postgres
     environment:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/taskmanager
-      QUARKUS_DATASOURCE_USERNAME: syonet
-      QUARKUS_DATASOURCE_PASSWORD: syonet
+      QUARKUS_DATASOURCE_USERNAME: postgres
+      QUARKUS_DATASOURCE_PASSWORD: postgres
     ports:
       - 8080:8080
     volumes:
       - ./backend/src/main/resources:/deployments/resources
     networks:
       - taskmanager-net
+    restart: always
 
   frontend:
     build:
@@ -39,6 +47,19 @@ services:
       - backend
     ports:
       - 3000:3000
+    networks:
+      - taskmanager-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: taskmanager-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
     networks:
       - taskmanager-net
 
