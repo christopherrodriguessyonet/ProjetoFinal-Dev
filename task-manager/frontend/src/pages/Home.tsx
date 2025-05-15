@@ -21,6 +21,9 @@ const Home: React.FC = () => {
         {user.role === 'ADMIN' && (
           <Button variant="contained" color="info" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/dashboard')}>Dashboard</Button>
         )}
+        {user.role === 'ADMIN' && (
+          <Button variant="contained" color="success" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/cadastrar-usuario')}>Cadastrar Usuário</Button>
+        )}
         <Button variant="outlined" color="primary" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/home')}>Home</Button>
         <Button variant="outlined" color="error" fullWidth onClick={handleLogout}>Sair</Button>
       </Paper>

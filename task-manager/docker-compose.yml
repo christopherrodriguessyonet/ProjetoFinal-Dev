@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -34,6 +35,7 @@ services:
       - 8080:8080
     volumes:
       - ./backend/src/main/resources:/deployments/resources
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "/deployments/quarkus-run.jar"]
     networks:
       - taskmanager-net
     restart: always
