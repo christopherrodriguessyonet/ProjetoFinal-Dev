@@ -5,17 +5,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import java.time.LocalDateTime;
+import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "tasks")
 @Data //cria automaticamente os getters e setters
 public class Task {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String titulo;
     private String descricao;
     private String status;
     private String responsavel;
     private boolean completo;
+    private LocalDateTime dataEntrega;
 }
