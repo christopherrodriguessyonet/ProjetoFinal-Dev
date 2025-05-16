@@ -18,12 +18,12 @@ CREATE TABLE IF NOT EXISTS tasks (
     data_entrega TIMESTAMP
 );
 
--- Criar usuário admin inicial (senha: admin123)
+-- Criar usuário admin inicial (senha: admin123, hash gerado pelo endpoint /api/auth/hash)
 INSERT INTO users (email, nome, senha, role)
 VALUES ('admin@taskmanager.com', 'Administrador',
 '$2a$12$3qmG/2.rivz9qV1BFdJh6.OYsUkNHD8.WNb/T72TwXRZWwWF.YyqG', 'ADMIN');
 
--- Criar usuário comum para testes (senha: user123)
+-- Criar usuário comum para testes (senha: user123, hash gerado pelo endpoint /api/auth/hash)
 INSERT INTO users (email, nome, senha, role)
 VALUES ('user@taskmanager.com', 'Usuário Teste',
 '$2a$12$jWO6mZhKVCDy1yqM0N/HU.O9U.dHbZX5W4P3spYGgGHE3ZUiYmQZi', 'USER');
