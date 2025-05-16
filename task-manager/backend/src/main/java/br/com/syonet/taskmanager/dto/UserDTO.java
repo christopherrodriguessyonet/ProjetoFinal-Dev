@@ -1,6 +1,5 @@
 package br.com.syonet.taskmanager.dto;
 
-import br.com.syonet.taskmanager.entity.User;
 import br.com.syonet.taskmanager.entity.User.UserRole;
 
 public class UserDTO {
@@ -18,8 +17,8 @@ public class UserDTO {
         this.nome = nome;
         this.role = role;
     }
-    
-    public static UserDTO fromEntity(User user) {
+
+    public static UserDTO fromEntity(br.com.syonet.taskmanager.entity.User user) {
         return new UserDTO(user.id, user.email, user.nome, user.role);
     }
 }
