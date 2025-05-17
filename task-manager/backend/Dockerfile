@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/openjdk-17:1.21
+FROM eclipse-temurin:17-jdk-jammy
 
 ENV LANGUAGE='en_US:en'
 
@@ -14,7 +14,10 @@ COPY src/main/resources/publicKey.pem /deployments/
 EXPOSE 8080
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+# ENV JAVA_APP_JAR="/deployments/quarkus-run.jar" # Comentado pois a imagem base pode não ter esse script/path
 ENV QUARKUS_PROFILE=dev
 
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+# ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ] # Comentado pois a imagem base pode não ter esse script/path
+
+# Comando de entrada padrão para aplicações Quarkus em Java
+CMD ["java", "-Dquarkus.http.host=0.0.0.0", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-jar", "/deployments/quarkus-run.jar"]

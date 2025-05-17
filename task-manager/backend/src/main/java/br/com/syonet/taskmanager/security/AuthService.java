@@ -10,6 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.time.Duration;
 import java.util.Set;
 import br.com.syonet.taskmanager.dto.UserDTO;
+import br.com.syonet.taskmanager.dto.LoginDTO;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
@@ -24,6 +25,10 @@ public class AuthService {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         return generateToken(user);
+    }
+
+    public String login(LoginDTO loginDTO) {
+        return authenticate(loginDTO.email, loginDTO.senha);
     }
 
     @Transactional

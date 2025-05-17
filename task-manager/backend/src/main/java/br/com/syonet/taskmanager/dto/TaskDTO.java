@@ -1,14 +1,31 @@
 package br.com.syonet.taskmanager.dto;
 
-import lombok.Data; 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
 import java.time.LocalDateTime;
+
 @Data
 public class TaskDTO {
     private Long id;
-    private String titulo;
-    private String descricao;
-    private String status;
-    private String responsavel;
-    private boolean completo;
-    private LocalDateTime dataEntrega;
+
+    @NotBlank(message = "O título é obrigatório")
+    public String titulo;
+
+    public String descricao;
+
+    @NotBlank(message = "O status é obrigatório")
+    public String status;
+
+    @NotBlank(message = "O responsável é obrigatório")
+    public String responsavel;
+
+    @NotNull(message = "O campo 'completo' é obrigatório")
+    public Boolean completo;
+
+    @NotNull(message = "A data de entrega é obrigatória")
+    @FutureOrPresent(message = "A data de entrega não pode estar no passado")
+    public LocalDateTime dataEntrega;
 }
