@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import java.time.LocalDateTime;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+
 
 @Entity
 @Table(name = "tasks")
@@ -20,5 +22,7 @@ public class Task {
     private String status;
     private String responsavel;
     private boolean completo;
+
+    @Column(name = "data_entrega")
     private LocalDateTime dataEntrega;
 }
