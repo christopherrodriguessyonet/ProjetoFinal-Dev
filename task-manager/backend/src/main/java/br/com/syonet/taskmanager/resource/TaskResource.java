@@ -46,5 +46,15 @@ import jakarta.ws.rs.core.SecurityContext;
             taskService.deleteTask(id, emailUsuario);
               return Response.noContent().build();
     }
+        @PUT
+        @Path("/{id}")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @RolesAllowed({"ADMIN", "USER"})
+        public Response atualizar(@PathParam("id") Long id, @Valid TaskDTO dto, @Context SecurityContext context) {
+            String emailUsuario = context.getUserPrincipal().getName();
+            TaskDTO atualizada = taskService.updateTask(id, dto, emailUsuario);
+            return Response.ok(atualizada).build();
+}
+
 
 }

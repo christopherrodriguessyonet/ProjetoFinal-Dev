@@ -73,17 +73,22 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO updateTask(Long id, TaskDTO taskDTO, String userEmail) {
+    public TaskDTO updateTask(Long id, TaskDTO dto, String userEmail) {
         Task task = taskRepository.findById(id);
         if (task == null) {
             throw new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.Status.NOT_FOUND);
         }
-        // task.setTitulo(taskDTO);
-        // task.setDescricao(taskDTO.getDescricao());
-        // task.setCompleto(taskDTO.isCompleto());
-        // task.setDataEntrega(taskDTO.getDataEntrega());
+
+        task.setTitulo(dto.getTitulo());
+        task.setDescricao(dto.getDescricao());
+        task.setStatus(dto.getStatus());
+        task.setResponsavel(dto.getResponsavel());
+        task.setCompleto(dto.getCompleto());
+        task.setDataEntrega(dto.getDataEntrega());
+
         return toDTO(task);
-    }
+}
+
 
     @Transactional
     public void deleteTask(Long id, String userEmail) {
