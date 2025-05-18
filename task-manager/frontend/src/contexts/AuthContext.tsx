@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
 import api from '../services/api';
+import { parseJwt, TokenPayload } from '../utils/jwt';
 
 interface AuthContextData {
     isAuthenticated: boolean;
     isAdmin: boolean;
     token: string | null;
+    user: TokenPayload | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
 }
@@ -12,8 +14,12 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-    const [isAdmin, setIsAdmin] = useState(false);
+    const storedToken = localStorage.getItem('token');
+    const initialUser = storedToken ? parseJwt(storedToken) : null;
+
+    const [token, setToken] = useState<string | null>(storedToken);
+    const [user, setUser] = useState<TokenPayload | null>(initialUser);
+    const [isAdmin, setIsAdmin] = useState(initialUser?.groups.includes('ADMIN') || false);
 
     const login = async (email: string, password: string) => {
         try {
@@ -21,7 +27,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const token = response.data;
             localStorage.setItem('token', token);
             setToken(token);
-            // Aqui você pode adicionar lógica para verificar se é admin, se o backend retornar essa info
+
+            const userData = parseJwt(token);
+            setUser(userData);
+            setIsAdmin(userData?.groups.includes('ADMIN') || false);
         } catch (error) {
             throw new Error('Falha na autenticação');
         }
@@ -30,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = () => {
         localStorage.removeItem('token');
         setToken(null);
+        setUser(null);
         setIsAdmin(false);
     };
 
@@ -38,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isAuthenticated: !!token,
             isAdmin,
             token,
+            user,
             login,
             logout
         }}>

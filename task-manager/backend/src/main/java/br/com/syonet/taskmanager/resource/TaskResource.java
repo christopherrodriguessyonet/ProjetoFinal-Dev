@@ -2,6 +2,7 @@ package br.com.syonet.taskmanager.resource;
 
 import br.com.syonet.taskmanager.dto.TaskDTO;
 import br.com.syonet.taskmanager.security.AuthService;
+import br.com.syonet.taskmanager.service.TaskService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -17,12 +18,17 @@ public class TaskResource {
     @Inject
     AuthService authService;
 
+    @Inject
+    TaskService taskService;
+
+
     @POST
     @RolesAllowed({"ADMIN", "USER"})
     public Response criar(@Valid TaskDTO taskDTO) {
-        // lógica de criação
-        return Response.status(Response.Status.CREATED).build();
-    }
+        TaskDTO novaTask = taskService.createTask(taskDTO);
+        return Response.status(Response.Status.CREATED).entity(novaTask).build();
+}
 
-    // outros métodos
+
+    // outros métodos (get, put, delete, etc.)
 }
