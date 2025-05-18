@@ -11,6 +11,8 @@ COPY src/main/resources/publicKey.pem /deployments/publicKey.pem
 COPY src/main/resources/publicKey.pem /deployments/
 
 
+
+
 EXPOSE 8080
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"

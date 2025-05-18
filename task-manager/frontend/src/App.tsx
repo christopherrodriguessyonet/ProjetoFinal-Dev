@@ -13,12 +13,8 @@ import CadastrarUsuario from './pages/CadastrarUsuario';
 const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
+    primary: { main: '#1976d2' },
+    secondary: { main: '#dc004e' },
   },
 });
 
@@ -30,28 +26,48 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin }) => {
   const { isAuthenticated, isAdmin } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (requireAdmin && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (requireAdmin && !isAdmin) return <Navigate to="/home" replace />;
 
   return <>{children}</>;
 };
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
+
   return (
     <Routes>
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" replace />} />
-      <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} />
-      <Route path="/minhas-tarefas" element={isAuthenticated ? <MinhasTarefas /> : <Navigate to="/login" replace />} />
-      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} />
-      <Route path="/nova-tarefa" element={isAuthenticated ? <TaskForm /> : <Navigate to="/login" replace />} />
-      <Route path="/editar-tarefa/:id" element={isAuthenticated ? <TaskForm /> : <Navigate to="/login" replace />} />
-      <Route path="/cadastrar-usuario" element={<CadastrarUsuario />} />
+      <Route path="/home" element={
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      } />
+      <Route path="/minhas-tarefas" element={
+        <ProtectedRoute>
+          <MinhasTarefas />
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/nova-tarefa" element={
+        <ProtectedRoute>
+          <TaskForm />
+        </ProtectedRoute>
+      } />
+      <Route path="/editar-tarefa/:id" element={
+        <ProtectedRoute>
+          <TaskForm />
+        </ProtectedRoute>
+      } />
+      <Route path="/cadastrar-usuario" element={
+        <ProtectedRoute requireAdmin>
+          <CadastrarUsuario />
+        </ProtectedRoute>
+      } />
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
