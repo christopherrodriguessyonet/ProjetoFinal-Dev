@@ -39,7 +39,7 @@ public class AuthService {
         User user = new User();
         user.email = userDTO.email;
         user.nome = userDTO.nome;
-        user.role = userDTO.role;
+        user.role = User.UserRole.valueOf(userDTO.role);
         user.senha = hashPassword(userDTO.senha);
         user.persist();
         return generateToken(user);
@@ -47,7 +47,7 @@ public class AuthService {
     
     private String generateToken(User user) {
         return Jwt.issuer(issuer)
-            .audience("taskmanager") // ⬅️ Aqui está o ajuste importante
+            .audience("taskmanager") 
             .subject(user.email)
             .groups(Set.of(user.role.name()))
             .expiresIn(Duration.ofHours(24))

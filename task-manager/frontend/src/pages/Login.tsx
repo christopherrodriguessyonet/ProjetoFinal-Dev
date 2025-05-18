@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
 import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -16,6 +15,7 @@ const Login: React.FC = () => {
         setErro('');
         try {
             await login(email, senha);
+            console.log('Login bem-sucedido');
             navigate('/home');
         } catch (err: any) {
             setErro('Credenciais inválidas');

@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 -- Criar usuário admin inicial (senha: admin123, hash gerado pelo endpoint /api/auth/hash)
 INSERT INTO users (email, nome, senha, role)
 VALUES ('admin@taskmanager.com', 'Administrador',
-'$2a$12$3qmG/2.rivz9qV1BFdJh6.OYsUkNHD8.WNb/T72TwXRZWwWF.YyqG', 'ADMIN');
+'$2a$12$5xbIW8TXT6l5B9QCrp5WlulQARuUQtSxLBvidtaPZcnizByq1hHBm', 'ADMIN');
 
 -- Criar usuário comum para testes (senha: user123, hash gerado pelo endpoint /api/auth/hash)
 INSERT INTO users (email, nome, senha, role)

@@ -42,7 +42,7 @@ public class TaskService {
         Task task = new Task();
         task.setTitulo(dto.getTitulo());
         task.setDescricao(dto.getDescricao());
-        task.setCompleto(dto.isCompleto());
+        task.setCompleto(dto.getCompleto());
         task.setDataEntrega(dto.getDataEntrega());
         return task;
     }
@@ -73,10 +73,10 @@ public class TaskService {
         if (task == null) {
             throw new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.Status.NOT_FOUND);
         }
-        task.setTitulo(taskDTO.getTitulo());
-        task.setDescricao(taskDTO.getDescricao());
-        task.setCompleto(taskDTO.isCompleto());
-        task.setDataEntrega(taskDTO.getDataEntrega());
+        // task.setTitulo(taskDTO);
+        // task.setDescricao(taskDTO.getDescricao());
+        // task.setCompleto(taskDTO.isCompleto());
+        // task.setDataEntrega(taskDTO.getDataEntrega());
         return toDTO(task);
     }
 

@@ -1,14 +1,20 @@
-# Build stage
-FROM node:18-alpine as build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+# Etapa base com Node.js
+FROM node:18-alpine
 
-# Production stage
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos de dependências
+COPY package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia o restante do código da aplicação
+COPY . .
+
+# Expõe a porta padrão do React
 EXPOSE 3000
-CMD ["nginx", "-g", "daemon off;"]
+
+# Comando padrão para iniciar em modo de desenvolvimento
+CMD ["npm", "start"]

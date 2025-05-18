@@ -40,7 +40,7 @@ public class UserService {
         User user = new User();
         user.email = userDTO.email;
         user.nome = userDTO.nome;
-        user.role = userDTO.role;
+        user.role = User.UserRole.valueOf(userDTO.role);
         user.senha = authService.hashPassword(userDTO.senha);
         user.persist();
         return UserDTO.fromEntity(user);
@@ -60,7 +60,7 @@ public class UserService {
 
         user.email = userDTO.email;
         user.nome = userDTO.nome;
-        user.role = userDTO.role;
+        user.role = User.UserRole.valueOf(userDTO.role);
         if (userDTO.senha != null && !userDTO.senha.isEmpty()) {
             user.senha = authService.hashPassword(userDTO.senha);
         }

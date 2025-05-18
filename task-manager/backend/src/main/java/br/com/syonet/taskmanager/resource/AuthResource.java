@@ -30,4 +30,10 @@ public class AuthResource {
         String token = authService.register(userDTO);
         return Response.ok().entity(token).build();
     }
+
+    @POST
+    @Path("/hash")
+    public String gerarHash(LoginDTO dto) {
+        return authService.hashPassword(dto.senha);
+    }
 }

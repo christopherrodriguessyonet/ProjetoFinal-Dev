@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 15
@@ -38,7 +38,7 @@ services:
       - 8080:8080
     volumes:
       - ./backend/src/main/resources:/deployments/resources
-    command: ["./wait-for-it.sh", "postgres:5432", "-t", "60", "--", "java", "-jar", "/deployments/quarkus-run.jar"]
+    command: [ "./wait-for-it.sh", "postgres:5432", "-t", "60", "--", "java", "-jar", "/deployments/quarkus-run.jar" ]
     networks:
       - taskmanager-net
     restart: always
@@ -46,8 +46,11 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     container_name: taskmanager-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     ports:
@@ -70,6 +73,7 @@ services:
 
 volumes:
   postgres_data:
+
 
 networks:
   taskmanager-net:
