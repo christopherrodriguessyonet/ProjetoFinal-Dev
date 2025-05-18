@@ -26,6 +26,12 @@ const Dashboard: React.FC = () => {
     fetchTasks();
   }, []);
 
+
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   const handleDelete = async (id: number) => {
     await api.delete(`/tasks/${id}`);
     fetchTasks();

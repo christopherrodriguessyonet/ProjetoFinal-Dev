@@ -12,24 +12,39 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 
-@Path("/api/tasks")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class TaskResource {
 
-    @Inject
-    TaskService taskService;
+    @Path("/api/tasks")
+    @Produces(MediaType.APPLICATION_JSON)
+    public class TaskResource {
 
-    @Inject
-    AuthService authService;
+        @Inject
+        TaskService taskService;
 
-    @POST
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response criar(@Valid TaskDTO taskDTO, @Context SecurityContext context) {
-        String emailUsuario = context.getUserPrincipal().getName();
-        TaskDTO novaTask = taskService.createTask(taskDTO, emailUsuario);
-        return Response.status(Response.Status.CREATED).entity(novaTask).build();
+        @Inject
+        AuthService authService;
+
+        @POST
+        @Consumes(MediaType.APPLICATION_JSON) // ← aqui sim
+        @RolesAllowed({"ADMIN", "USER"})
+        public Response criar(@Valid TaskDTO taskDTO, @Context SecurityContext context) {
+            String emailUsuario = context.getUserPrincipal().getName();
+            TaskDTO novaTask = taskService.createTask(taskDTO, emailUsuario);
+            return Response.status(Response.Status.CREATED).entity(novaTask).build();
+        }
+
+        @GET
+        @Path("")
+        @RolesAllowed({"ADMIN"})
+        public Response listarTodas(@Context SecurityContext context) {
+        return Response.ok(taskService.getAllTasks()).build();
     }
-
+        @DELETE
+        @Path("/{id}")
+        @RolesAllowed({"ADMIN"})
+        public Response deletar(@PathParam("id") Long id, @Context SecurityContext context) {
+            String emailUsuario = context.getUserPrincipal().getName();
+            taskService.deleteTask(id, emailUsuario);
+              return Response.noContent().build();
+    }
 
 }
