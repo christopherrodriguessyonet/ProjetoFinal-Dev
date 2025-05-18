@@ -33,6 +33,8 @@ public class TaskService {
         dto.setId(task.getId());
         dto.setTitulo(task.getTitulo());
         dto.setDescricao(task.getDescricao());
+        dto.setStatus(dto.getStatus());
+        dto.setResponsavel(dto.getResponsavel());
         dto.setCompleto(task.isCompleto());
         dto.setDataEntrega(task.getDataEntrega());
         return dto;
@@ -42,10 +44,13 @@ public class TaskService {
         Task task = new Task();
         task.setTitulo(dto.getTitulo());
         task.setDescricao(dto.getDescricao());
+        task.setStatus(dto.getStatus());
+        task.setResponsavel(dto.getResponsavel());
         task.setCompleto(dto.getCompleto());
         task.setDataEntrega(dto.getDataEntrega());
         return task;
-    }
+}
+
 
     public List<TaskDTO> listTasks(String userEmail) {
         // Aqui você pode filtrar por usuário, se necessário
