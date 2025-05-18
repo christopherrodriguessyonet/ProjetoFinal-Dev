@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/api/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -16,19 +18,18 @@ import jakarta.ws.rs.core.Response;
 public class TaskResource {
 
     @Inject
-    AuthService authService;
-
-    @Inject
     TaskService taskService;
 
+    @Inject
+    AuthService authService;
 
     @POST
     @RolesAllowed({"ADMIN", "USER"})
-    public Response criar(@Valid TaskDTO taskDTO) {
-        TaskDTO novaTask = taskService.createTask(taskDTO);
+    public Response criar(@Valid TaskDTO taskDTO, @Context SecurityContext context) {
+        String emailUsuario = context.getUserPrincipal().getName();
+        TaskDTO novaTask = taskService.createTask(taskDTO, emailUsuario);
         return Response.status(Response.Status.CREATED).entity(novaTask).build();
-}
+    }
 
 
-    // outros métodos (get, put, delete, etc.)
 }
