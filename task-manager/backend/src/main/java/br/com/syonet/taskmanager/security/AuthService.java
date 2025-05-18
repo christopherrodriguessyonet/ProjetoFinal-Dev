@@ -10,6 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.time.Duration;
 import java.util.Set;
 import br.com.syonet.taskmanager.dto.UserDTO;
+import br.com.syonet.taskmanager.dto.LoginDTO;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
@@ -26,6 +27,10 @@ public class AuthService {
         return generateToken(user);
     }
 
+    public String login(LoginDTO loginDTO) {
+        return authenticate(loginDTO.email, loginDTO.senha);
+    }
+
     @Transactional
     public String register(UserDTO userDTO) {
         if (User.findByEmail(userDTO.email) != null) {
@@ -34,7 +39,7 @@ public class AuthService {
         User user = new User();
         user.email = userDTO.email;
         user.nome = userDTO.nome;
-        user.role = userDTO.role;
+        user.role = User.UserRole.valueOf(userDTO.role);
         user.senha = hashPassword(userDTO.senha);
         user.persist();
         return generateToken(user);
@@ -42,7 +47,7 @@ public class AuthService {
     
     private String generateToken(User user) {
         return Jwt.issuer(issuer)
-            .audience("taskmanager") // ⬅️ Aqui está o ajuste importante
+            .audience("taskmanager") 
             .subject(user.email)
             .groups(Set.of(user.role.name()))
             .expiresIn(Duration.ofHours(24))

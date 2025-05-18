@@ -29,7 +29,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin }) => {
   const { isAuthenticated, isAdmin } = useAuth();
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -42,15 +42,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
 };
 
 const AppRoutes = () => {
-  const token = localStorage.getItem('token');
+  const { isAuthenticated } = useAuth();
   return (
     <Routes>
-      <Route path="/login" element={!token ? <Login /> : <Navigate to="/home" replace />} />
-      <Route path="/home" element={token ? <Home /> : <Navigate to="/login" replace />} />
-      <Route path="/minhas-tarefas" element={token ? <MinhasTarefas /> : <Navigate to="/login" replace />} />
-      <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" replace />} />
-      <Route path="/nova-tarefa" element={token ? <TaskForm /> : <Navigate to="/login" replace />} />
-      <Route path="/editar-tarefa/:id" element={token ? <TaskForm /> : <Navigate to="/login" replace />} />
+      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" replace />} />
+      <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} />
+      <Route path="/minhas-tarefas" element={isAuthenticated ? <MinhasTarefas /> : <Navigate to="/login" replace />} />
+      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} />
+      <Route path="/nova-tarefa" element={isAuthenticated ? <TaskForm /> : <Navigate to="/login" replace />} />
+      <Route path="/editar-tarefa/:id" element={isAuthenticated ? <TaskForm /> : <Navigate to="/login" replace />} />
       <Route path="/cadastrar-usuario" element={<CadastrarUsuario />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>

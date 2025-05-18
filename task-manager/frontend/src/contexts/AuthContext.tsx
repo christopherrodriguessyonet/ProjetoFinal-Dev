@@ -17,8 +17,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await api.post('/auth/login', { email, password });
-            const { token } = response.data;
+            const response = await api.post('/auth/login', { email, senha: password });
+            const token = response.data;
             localStorage.setItem('token', token);
             setToken(token);
             // Aqui você pode adicionar lógica para verificar se é admin, se o backend retornar essa info
