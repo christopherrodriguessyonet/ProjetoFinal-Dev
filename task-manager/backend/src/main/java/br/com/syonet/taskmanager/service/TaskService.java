@@ -8,6 +8,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import br.com.syonet.taskmanager.entity.User;
+
 
 @ApplicationScoped
 public class TaskService {
@@ -107,4 +109,25 @@ public class TaskService {
         }
         taskRepository.delete(task);
     }
+
+    public List<TaskDTO> findByStatus(String status, String userEmail) {
+    List<Task> tarefasFiltradas;
+
+    if (status == null || status.isBlank()) {
+        tarefasFiltradas = taskRepository.listAll();
+    } else {
+        tarefasFiltradas = taskRepository.list("status", status);
+    }
+
+    return tarefasFiltradas.stream()
+        .filter(task -> userEmail.equalsIgnoreCase(task.getResponsavel()) || isAdmin(userEmail))
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+}
+
+    private boolean isAdmin(String email) {
+        User user = User.findByEmail(email);
+        return user != null && user.role == User.UserRole.ADMIN;
+}
+
 }

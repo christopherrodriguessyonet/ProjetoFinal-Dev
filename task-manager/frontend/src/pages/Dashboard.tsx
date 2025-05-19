@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
 import api from '../services/api';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface Task {
@@ -15,33 +30,25 @@ interface Task {
 
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const navigate = useNavigate();
 
   const fetchTasks = async () => {
     try {
-      const response = await api.get('/tasks');
-      console.log('✅ RESPOSTA CORRETA:', response.data);
+      const url = statusFilter
+        ? `/tasks/filtro?status=${statusFilter}`
+        : `/tasks`;
+
+      const response = await api.get(url);
       setTasks(response.data);
-    } catch (error: any) {
-      console.error('❌ ERRO AO BUSCAR TAREFAS');
-
-      if (error.response) {
-        console.error('📄 STATUS:', error.response.status);
-        console.error('📄 HEADERS:', error.response.headers);
-        console.error('📄 DATA:', error.response.data);
-      } else {
-        console.error(error.message);
-      }
-
-      alert("Erro ao carregar tarefas. Veja o console para detalhes.");
+    } catch (error) {
+      console.error('Erro ao buscar tarefas:', error);
     }
   };
 
-
-
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [statusFilter]);
 
   const handleDelete = async (id: number) => {
     await api.delete(`/tasks/${id}`);
@@ -50,10 +57,28 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Typography variant="h4" gutterBottom>Minhas Tarefas</Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate('/nova-tarefa')} sx={{ mb: 2 }}>
-        Nova Tarefa
+      <Button variant="outlined" sx={{ mb: 2 }} onClick={() => navigate('/home')}>
+        Home
       </Button>
+
+      <Typography variant="h4" gutterBottom>
+        Tarefas da Equipe
+      </Typography>
+
+      <FormControl sx={{ mb: 2, minWidth: 200 }}>
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={statusFilter}
+          label="Status"
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <MenuItem value="">Todos</MenuItem>
+          <MenuItem value="PENDENTE">Pendente</MenuItem>
+          <MenuItem value="ANDAMENTO">Andamento</MenuItem>
+          <MenuItem value="CONCLUIDO">Concluído</MenuItem>
+        </Select>
+      </FormControl>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -75,12 +100,25 @@ const Dashboard: React.FC = () => {
                 <TableCell>{task.status}</TableCell>
                 <TableCell>{task.responsavel}</TableCell>
                 <TableCell>{task.completo ? 'Sim' : 'Não'}</TableCell>
-                <TableCell>{task.dataEntrega ? new Date(task.dataEntrega).toLocaleString() : '-'}</TableCell>
                 <TableCell>
-                  <Button variant="outlined" color="primary" size="small" onClick={() => navigate(`/editar-tarefa/${task.id}`)} sx={{ mr: 1 }}>
+                  {task.dataEntrega ? new Date(task.dataEntrega).toLocaleString() : '-'}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    onClick={() => navigate(`/editar-tarefa/${task.id}`)}
+                    sx={{ mr: 1 }}
+                  >
                     Editar
                   </Button>
-                  <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(task.id)}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    onClick={() => handleDelete(task.id)}
+                  >
                     Excluir
                   </Button>
                 </TableCell>
@@ -93,4 +131,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
