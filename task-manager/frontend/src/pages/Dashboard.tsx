@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await api.get('/tasks/minhas');
+      const response = await api.get('/tasks');
       console.log('✅ RESPOSTA CORRETA:', response.data);
       setTasks(response.data);
     } catch (error: any) {
@@ -33,10 +33,10 @@ const Dashboard: React.FC = () => {
         console.error(error.message);
       }
 
-      // Mostra alerta amigável
       alert("Erro ao carregar tarefas. Veja o console para detalhes.");
     }
   };
+
 
 
   useEffect(() => {
