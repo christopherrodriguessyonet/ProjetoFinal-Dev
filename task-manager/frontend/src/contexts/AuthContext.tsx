@@ -31,6 +31,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userData = parseJwt(token);
             setUser(userData);
             setIsAdmin(userData?.groups.includes('ADMIN') || false);
+
+            // Salva o usuário no localStorage para uso no frontend
+            localStorage.setItem('user', JSON.stringify(userData));
         } catch (error) {
             throw new Error('Falha na autenticação');
         }
@@ -38,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setToken(null);
         setUser(null);
         setIsAdmin(false);

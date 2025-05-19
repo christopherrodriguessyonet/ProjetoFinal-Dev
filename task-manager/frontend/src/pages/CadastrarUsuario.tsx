@@ -33,6 +33,9 @@ const CadastrarUsuario: React.FC = () => {
   return (
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
       <Paper elevation={3} sx={{ p: 4, minWidth: 320 }}>
+        <Button variant="outlined" color="primary" onClick={() => navigate('/home')} sx={{ mb: 2 }}>
+          Home
+        </Button>
         <Typography variant="h5" mb={2}>Cadastrar Usuário</Typography>
         <form onSubmit={handleSubmit}>
           <TextField label="E-mail" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} required />
@@ -52,4 +55,4 @@ const CadastrarUsuario: React.FC = () => {
   );
 };
 
-export default CadastrarUsuario; 
+export default CadastrarUsuario;

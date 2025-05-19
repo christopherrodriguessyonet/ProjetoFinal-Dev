@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
 import { TextField, Button, Paper, Typography, Box, FormControlLabel, Checkbox } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext'; // ✅ Importa o contexto de autenticação
 
 interface TaskFormData {
   titulo: string;
@@ -15,6 +16,8 @@ interface TaskFormData {
 const TaskForm: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth(); // ✅ Usa o contexto aqui
+
   const [form, setForm] = useState<TaskFormData>({
     titulo: '',
     descricao: '',
@@ -42,12 +45,27 @@ const TaskForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (id) {
-      await api.put(`/tasks/${id}`, form);
-    } else {
-      await api.post('/tasks', form);
+    try {
+      if (id) {
+        await api.put(`/tasks/${id}`, form);
+      } else {
+        await api.post('/tasks', form);
+      }
+
+      // ✅ Redireciona para a página correta com base na role
+      if (user?.groups.includes('ADMIN')) {
+        navigate('/dashboard');
+      } else {
+        navigate('/minhas-tarefas');
+      }
+
+    } catch (err: any) {
+      console.error('❌ Erro ao salvar tarefa:', err);
+
+      if (err?.response?.status >= 400) {
+        alert('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+      }
     }
-    navigate('/dashboard');
   };
 
   return (
@@ -108,7 +126,7 @@ const TaskForm: React.FC = () => {
             <Button variant="contained" color="primary" type="submit">
               Salvar
             </Button>
-            <Button variant="outlined" color="secondary" onClick={() => navigate('/dashboard')}>
+            <Button variant="outlined" color="secondary" onClick={() => navigate('/home')}>
               Cancelar
             </Button>
           </Box>

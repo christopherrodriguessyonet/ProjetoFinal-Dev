@@ -53,9 +53,16 @@ public class TaskService {
 
 
     public List<TaskDTO> listTasks(String userEmail) {
-        // Aqui você pode filtrar por usuário, se necessário
-        return getAllTasks();
-    }
+    System.out.println("Buscando tarefas para: " + userEmail);
+    List<TaskDTO> tarefas = taskRepository.listAll().stream()
+        .filter(task -> userEmail.equalsIgnoreCase(task.getResponsavel()))
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+    System.out.println("Total de tarefas encontradas: " + tarefas.size());
+    return tarefas;
+}
+
+
 
     public TaskDTO getTask(Long id, String userEmail) {
         Task task = taskRepository.findById(id);
@@ -66,24 +73,31 @@ public class TaskService {
         return toDTO(task);
     }
 
-    @Transactional
+        @Transactional
     public TaskDTO createTask(TaskDTO taskDTO, String userEmail) {
-        //  associar o usuário à task, se necessário
-        return createTask(taskDTO);
-    }
+    taskDTO.setResponsavel(userEmail);
+    return createTask(taskDTO);
+}
+
+
 
     @Transactional
-    public TaskDTO updateTask(Long id, TaskDTO taskDTO, String userEmail) {
+    public TaskDTO updateTask(Long id, TaskDTO dto, String userEmail) {
         Task task = taskRepository.findById(id);
         if (task == null) {
             throw new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.Status.NOT_FOUND);
         }
-        // task.setTitulo(taskDTO);
-        // task.setDescricao(taskDTO.getDescricao());
-        // task.setCompleto(taskDTO.isCompleto());
-        // task.setDataEntrega(taskDTO.getDataEntrega());
+
+        task.setTitulo(dto.getTitulo());
+        task.setDescricao(dto.getDescricao());
+        task.setStatus(dto.getStatus());
+        task.setResponsavel(dto.getResponsavel());
+        task.setCompleto(dto.getCompleto());
+        task.setDataEntrega(dto.getDataEntrega());
+
         return toDTO(task);
-    }
+}
+
 
     @Transactional
     public void deleteTask(Long id, String userEmail) {

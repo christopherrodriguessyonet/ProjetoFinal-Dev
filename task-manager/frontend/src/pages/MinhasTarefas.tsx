@@ -19,9 +19,17 @@ const MinhasTarefas: React.FC = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const fetchTasks = async () => {
-    const response = await api.get('/tasks/minhas');
-    setTasks(response.data);
+    try {
+      const response = await api.get('/tasks/minhas');
+      setTasks(response.data);
+    } catch (error: any) {
+      console.error("Erro ao buscar tarefas:", error);
+      if (error.response?.data) {
+        console.error("Detalhes do erro:", error.response.data);
+      }
+    }
   };
+
 
   useEffect(() => {
     fetchTasks();
