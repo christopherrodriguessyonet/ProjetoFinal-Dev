@@ -55,6 +55,13 @@ import jakarta.ws.rs.core.SecurityContext;
             TaskDTO atualizada = taskService.updateTask(id, dto, emailUsuario);
             return Response.ok(atualizada).build();
 }
-
+        @GET
+        @Path("/minhas")
+        @RolesAllowed({"USER", "ADMIN"})
+        public Response listarMinhas(@Context SecurityContext context) {
+        String emailUsuario = context.getUserPrincipal().getName();
+        System.out.println("Usuário autenticado: " + emailUsuario);
+        return Response.ok(taskService.listTasks(emailUsuario)).build();
+    }
 
 }

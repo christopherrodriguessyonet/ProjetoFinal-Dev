@@ -18,9 +18,26 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const fetchTasks = async () => {
-    const response = await api.get('/tasks');
-    setTasks(response.data);
+    try {
+      const response = await api.get('/tasks/minhas');
+      console.log('✅ RESPOSTA CORRETA:', response.data);
+      setTasks(response.data);
+    } catch (error: any) {
+      console.error('❌ ERRO AO BUSCAR TAREFAS');
+
+      if (error.response) {
+        console.error('📄 STATUS:', error.response.status);
+        console.error('📄 HEADERS:', error.response.headers);
+        console.error('📄 DATA:', error.response.data);
+      } else {
+        console.error(error.message);
+      }
+
+      // Mostra alerta amigável
+      alert("Erro ao carregar tarefas. Veja o console para detalhes.");
+    }
   };
+
 
   useEffect(() => {
     fetchTasks();
