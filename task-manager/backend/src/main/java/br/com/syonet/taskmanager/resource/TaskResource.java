@@ -40,7 +40,7 @@ import jakarta.ws.rs.core.SecurityContext;
     }
         @DELETE
         @Path("/{id}")
-        @RolesAllowed({"ADMIN"})
+        @RolesAllowed({"ADMIN", "USER"})
         public Response deletar(@PathParam("id") Long id, @Context SecurityContext context) {
             String emailUsuario = context.getUserPrincipal().getName();
             taskService.deleteTask(id, emailUsuario);
