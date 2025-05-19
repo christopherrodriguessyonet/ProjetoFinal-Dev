@@ -33,8 +33,8 @@ public class TaskService {
         dto.setId(task.getId());
         dto.setTitulo(task.getTitulo());
         dto.setDescricao(task.getDescricao());
-        dto.setStatus(dto.getStatus());
-        dto.setResponsavel(dto.getResponsavel());
+        dto.setStatus(task.getStatus());
+        dto.setResponsavel(task.getResponsavel());
         dto.setCompleto(task.isCompleto());
         dto.setDataEntrega(task.getDataEntrega());
         return dto;
