@@ -42,7 +42,6 @@ const MinhasTarefas: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Button variant="outlined" color="primary" sx={{ mb: 2 }} onClick={() => navigate('/home')}>Home</Button>
       <Typography variant="h5" mb={2}>Minhas Tarefas</Typography>
       <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => navigate('/nova-tarefa')}>Adicionar Nova Tarefa</Button>
       <TableContainer component={Paper}>

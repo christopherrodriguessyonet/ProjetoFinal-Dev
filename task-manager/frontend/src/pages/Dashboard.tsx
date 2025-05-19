@@ -50,7 +50,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Button variant="outlined" color="primary" sx={{ mb: 2 }} onClick={() => navigate('/home')}>Home</Button>
       <Typography variant="h4" gutterBottom>Minhas Tarefas</Typography>
       <Button variant="contained" color="primary" onClick={() => navigate('/nova-tarefa')} sx={{ mb: 2 }}>
         Nova Tarefa
