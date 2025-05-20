@@ -21,6 +21,7 @@ public class UserDTO {
     public String senha;
 
     public String role;
+    public Long id;
 
     public static UserDTO fromEntity(User user) {
         UserDTO dto = new UserDTO();
@@ -28,6 +29,7 @@ public class UserDTO {
         dto.email = user.email;
         dto.senha = "";
         dto.role = user.role.name();
+        dto.id = user.id;
         return dto;
     }
     

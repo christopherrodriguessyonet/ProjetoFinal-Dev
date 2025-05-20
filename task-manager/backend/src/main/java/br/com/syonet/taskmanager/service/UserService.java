@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,11 +18,23 @@ public class UserService {
     @Inject
     AuthService authService;
 
-    public List<UserDTO> listUsers() {
-        return User.<User>listAll().stream()
-                .map(UserDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
+    public List<UserDTO> listUsers(String usuario, String perfil) {
+    return User.<User>listAll().stream()
+        .filter(user -> {
+            boolean matchesUsuario = (usuario == null || usuario.isBlank()) ||
+                (user.nome != null && user.nome.toLowerCase().contains(usuario.toLowerCase())) ||
+                (user.email != null && user.email.toLowerCase().contains(usuario.toLowerCase()));
+
+            boolean matchesPerfil = (perfil == null || perfil.isBlank()) ||
+                (user.role != null && user.role.name().equalsIgnoreCase(perfil));
+
+            return matchesUsuario && matchesPerfil;
+        })
+        .map(UserDTO::fromEntity)
+        .collect(Collectors.toList());
+}
+
+
 
     public UserDTO getUser(Long id) {
         User user = User.findById(id);
@@ -76,4 +89,4 @@ public class UserService {
         }
         user.delete();
     }
-} 
+}

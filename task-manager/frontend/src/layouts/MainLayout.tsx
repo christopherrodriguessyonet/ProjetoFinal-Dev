@@ -18,6 +18,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         ...(isAdmin ? [
             { label: 'Dashboard', path: '/dashboard' },
             { label: 'Cadastrar Usuário', path: '/cadastrar-usuario' },
+            { label: 'Lista de Usuários', path: '/lista-usuarios' },
         ] : []),
         { label: 'Sair', action: () => { logout(); navigate('/login'); } },
     ];

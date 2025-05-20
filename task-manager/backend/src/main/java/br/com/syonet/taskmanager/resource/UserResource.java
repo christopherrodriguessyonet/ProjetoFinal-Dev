@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Context;
 import java.util.List;
 
-@RolesAllowed("ADMIN") // ⬅️ Libera acesso a todos os métodos da classe para o grupo ADMIN
+@RolesAllowed("ADMIN")
 @Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -19,8 +19,11 @@ public class UserResource {
     UserService userService;
 
     @GET
-    public List<UserDTO> listUsers() {
-        List<UserDTO> users = userService.listUsers();
+    public List<UserDTO> listUsers(
+        @QueryParam("usuario") String usuario, 
+        @QueryParam("perfil") String perfil
+    ) {
+        List<UserDTO> users = userService.listUsers(usuario, perfil);
         if (users == null || users.isEmpty()) {
             throw new WebApplicationException("Nenhum usuário encontrado", 404);
         }
@@ -39,42 +42,24 @@ public class UserResource {
 
     @POST
     public UserDTO createUser(UserDTO userDTO) {
-        try {
-            return userService.createUser(userDTO);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new WebApplicationException("Erro ao criar usuário: " + e.getMessage(), 400);
-        }
+        return userService.createUser(userDTO);
     }
 
     @PUT
     @Path("/{id}")
     public UserDTO updateUser(@PathParam("id") Long id, UserDTO userDTO) {
-        try {
-            return userService.updateUser(id, userDTO);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new WebApplicationException("Erro ao atualizar usuário: " + e.getMessage(), 400);
-        }
+        return userService.updateUser(id, userDTO);
     }
 
     @DELETE
     @Path("/{id}")
     public void deleteUser(@PathParam("id") Long id) {
-        try {
-            userService.deleteUser(id);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new WebApplicationException("Erro ao deletar usuário: " + e.getMessage(), 400);
-        }
+        userService.deleteUser(id);
     }
+
     @GET
     @Path("/me")
     public String me(@Context jakarta.ws.rs.core.SecurityContext context) {
         return "Usuário: " + context.getUserPrincipal().getName();
     }
-
 }
