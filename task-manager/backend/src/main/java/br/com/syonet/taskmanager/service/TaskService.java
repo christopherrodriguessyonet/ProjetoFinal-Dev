@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import br.com.syonet.taskmanager.entity.User;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 
 @ApplicationScoped
@@ -35,8 +38,8 @@ public class TaskService {
         dto.setId(task.getId());
         dto.setTitulo(task.getTitulo());
         dto.setDescricao(task.getDescricao());
-        dto.setStatus(dto.getStatus());
-        dto.setResponsavel(dto.getResponsavel());
+        dto.setStatus(task.getStatus());
+        dto.setResponsavel(task.getResponsavel());
         dto.setCompleto(task.isCompleto());
         dto.setDataEntrega(task.getDataEntrega());
         return dto;
@@ -44,6 +47,7 @@ public class TaskService {
 
     private Task toEntity(TaskDTO dto) {
         Task task = new Task();
+        task.setId(dto.getId());
         task.setTitulo(dto.getTitulo());
         task.setDescricao(dto.getDescricao());
         task.setStatus(dto.getStatus());
@@ -60,8 +64,8 @@ public class TaskService {
         .filter(task -> userEmail.equalsIgnoreCase(task.getResponsavel()))
         .map(this::toDTO)
         .collect(Collectors.toList());
-    System.out.println("Total de tarefas encontradas: " + tarefas.size());
-    return tarefas;
+        System.out.println("Total de tarefas encontradas: " + tarefas.size());
+        return tarefas;
 }
 
 
@@ -110,24 +114,43 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-    public List<TaskDTO> findByStatus(String status, String userEmail) {
-    List<Task> tarefasFiltradas;
+   ppublic List<TaskDTO> filtrarTarefas(String status, String dataInicial, String dataFinal, String userEmail) {
+    return taskRepository.listAll().stream()
+        .filter(task -> {
+            // 1. Visibilidade: Admin vê tudo, usuário comum só o que ele criou
+            boolean visivel = isAdmin(userEmail) ||
+                (task.getResponsavel() != null && userEmail.equalsIgnoreCase(task.getResponsavel()));
 
-    if (status == null || status.isBlank()) {
-        tarefasFiltradas = taskRepository.listAll();
-    } else {
-        tarefasFiltradas = taskRepository.list("status", status);
-    }
+            // 2. Filtro por status
+            boolean correspondeStatus = (status == null || status.isBlank())
+                || status.equalsIgnoreCase(task.getStatus());
 
-    return tarefasFiltradas.stream()
-        .filter(task -> userEmail.equalsIgnoreCase(task.getResponsavel()) || isAdmin(userEmail))
+            // 3. Filtro por data de entrega
+            boolean dentroDoPeriodo = true;
+            LocalDateTime dataEntrega = task.getDataEntrega();
+            if (dataEntrega == null) return false;
+
+            try {
+                if (dataInicial != null && !dataInicial.isBlank()) {
+                    LocalDateTime inicio = LocalDate.parse(dataInicial).atStartOfDay();
+                    dentroDoPeriodo &= !dataEntrega.isBefore(inicio);
+                }
+
+                if (dataFinal != null && !dataFinal.isBlank()) {
+                    LocalDateTime fim = LocalDate.parse(dataFinal).atTime(23, 59, 59);
+                    dentroDoPeriodo &= !dataEntrega.isAfter(fim);
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao converter datas: " + e.getMessage());
+                return false;
+            }
+
+            return visivel && correspondeStatus && dentroDoPeriodo;
+        })
         .map(this::toDTO)
         .collect(Collectors.toList());
 }
 
-    private boolean isAdmin(String email) {
-        User user = User.findByEmail(email);
-        return user != null && user.role == User.UserRole.ADMIN;
-}
+
 
 }

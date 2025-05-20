@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -14,9 +14,20 @@ import {
   Select,
   FormControl,
   InputLabel,
+  TextField,
+  IconButton,
+  Stack,
 } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
+import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/pt-br';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+
+dayjs.locale('pt-br');
 
 interface Task {
   id: number;
@@ -31,13 +42,36 @@ interface Task {
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const [dataInicial, setDataInicial] = useState<Dayjs | null>(null);
+  const [dataFinal, setDataFinal] = useState<Dayjs | null>(null);
   const navigate = useNavigate();
+
+  // Carrega todas as tarefas ao abrir a página
+  useEffect(() => {
+    const loadAll = async () => {
+      try {
+        const response = await api.get('/tasks');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar tarefas iniciais:', error);
+      }
+    };
+
+    loadAll();
+  }, []);
 
   const fetchTasks = async () => {
     try {
-      const url = statusFilter
-        ? `/tasks/filtro?status=${statusFilter}`
-        : `/tasks`;
+      let url = '/tasks';
+      const params = new URLSearchParams();
+
+      if (statusFilter) params.append('status', statusFilter);
+      if (dataInicial) params.append('dataInicial', dataInicial.format('YYYY-MM-DD'));
+      if (dataFinal) params.append('dataFinal', dataFinal.format('YYYY-MM-DD'));
+
+      if (params.toString() !== '') {
+        url = `/tasks/filtro?${params.toString()}`;
+      }
 
       const response = await api.get(url);
       setTasks(response.data);
@@ -46,9 +80,17 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, [statusFilter]);
+  const handleClearFilters = async () => {
+    setStatusFilter('');
+    setDataInicial(null);
+    setDataFinal(null);
+    try {
+      const response = await api.get('/tasks');
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Erro ao limpar filtros:', error);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     await api.delete(`/tasks/${id}`);
@@ -57,27 +99,67 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Button variant="outlined" sx={{ mb: 2 }} onClick={() => navigate('/home')}>
-        Home
-      </Button>
-
       <Typography variant="h4" gutterBottom>
         Tarefas da Equipe
       </Typography>
 
-      <FormControl sx={{ mb: 2, minWidth: 200 }}>
-        <InputLabel>Status</InputLabel>
-        <Select
-          value={statusFilter}
-          label="Status"
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <MenuItem value="">Todos</MenuItem>
-          <MenuItem value="PENDENTE">Pendente</MenuItem>
-          <MenuItem value="ANDAMENTO">Andamento</MenuItem>
-          <MenuItem value="CONCLUIDO">Concluído</MenuItem>
-        </Select>
-      </FormControl>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Stack direction="row" spacing={2} mb={2} alignItems="center">
+          <Box sx={{ width: '200px' }}>
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={statusFilter}
+                label="Status"
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <MenuItem value="">Todos</MenuItem>
+                <MenuItem value="PENDENTE">Pendente</MenuItem>
+                <MenuItem value="ANDAMENTO">Andamento</MenuItem>
+                <MenuItem value="CONCLUIDO">Concluído</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box sx={{ width: '200px' }}>
+            <DatePicker
+              label="Data Inicial"
+              value={dataInicial}
+              onChange={(newValue) => setDataInicial(newValue as Dayjs | null)}
+              inputFormat="DD/MM/YYYY"
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </Box>
+
+          <Box sx={{ width: '200px' }}>
+            <DatePicker
+              label="Data Final"
+              value={dataFinal}
+              onChange={(newValue) => setDataFinal(newValue as Dayjs | null)}
+              inputFormat="DD/MM/YYYY"
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </Box>
+
+          <IconButton
+            color="primary"
+            onClick={fetchTasks}
+            sx={{ border: '1px solid #1976d2', borderRadius: 1 }}
+          >
+            <SearchIcon />
+          </IconButton>
+
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleClearFilters}
+            startIcon={<ClearIcon />}
+          >
+            Limpar
+          </Button>
+        </Stack>
+
+      </LocalizationProvider>
 
       <TableContainer component={Paper}>
         <Table>
@@ -101,7 +183,9 @@ const Dashboard: React.FC = () => {
                 <TableCell>{task.responsavel}</TableCell>
                 <TableCell>{task.completo ? 'Sim' : 'Não'}</TableCell>
                 <TableCell>
-                  {task.dataEntrega ? new Date(task.dataEntrega).toLocaleString() : '-'}
+                  {task.dataEntrega
+                    ? dayjs(task.dataEntrega).format('DD/MM/YYYY HH:mm')
+                    : '-'}
                 </TableCell>
                 <TableCell>
                   <Button

@@ -21,6 +21,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
 
+
     @Path("/api/tasks")
     @Produces(MediaType.APPLICATION_JSON)
     public class TaskResource {
@@ -75,9 +76,15 @@ import jakarta.ws.rs.core.SecurityContext;
     @GET
     @Path("/filtro")
     @RolesAllowed({"ADMIN", "USER"})
-    public Response filtrarPorStatus(@QueryParam("status") String status, @Context SecurityContext context) {
+    public Response filtrarTarefas(
+        @QueryParam("status") String status,
+        @QueryParam("dataInicial") String dataInicial,
+        @QueryParam("dataFinal") String dataFinal,
+        @Context SecurityContext context
+    ) {
         String emailUsuario = context.getUserPrincipal().getName();
-        return Response.ok(taskService.findByStatus(status, emailUsuario)).build();
-}
+        return Response.ok(taskService.filtrarTarefas(status, dataInicial, dataFinal, emailUsuario)).build();
+    }
+
 
     }
