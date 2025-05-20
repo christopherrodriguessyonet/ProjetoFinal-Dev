@@ -6,11 +6,20 @@ import br.com.syonet.taskmanager.service.TaskService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
+
 
 
     @Path("/api/tasks")
@@ -24,7 +33,7 @@ import jakarta.ws.rs.core.SecurityContext;
         AuthService authService;
 
         @POST
-        @Consumes(MediaType.APPLICATION_JSON) // ← aqui sim
+        @Consumes(MediaType.APPLICATION_JSON)
         @RolesAllowed({"ADMIN", "USER"})
         public Response criar(@Valid TaskDTO taskDTO, @Context SecurityContext context) {
             String emailUsuario = context.getUserPrincipal().getName();
@@ -59,9 +68,24 @@ import jakarta.ws.rs.core.SecurityContext;
         @Path("/minhas")
         @RolesAllowed({"USER", "ADMIN"})
         public Response listarMinhas(@Context SecurityContext context) {
-        String emailUsuario = context.getUserPrincipal().getName();
-        System.out.println("Usuário autenticado: " + emailUsuario);
-        return Response.ok(taskService.listTasks(emailUsuario)).build();
+            String emailUsuario = context.getUserPrincipal().getName();
+            System.out.println("Usuário autenticado: " + emailUsuario);
+            return Response.ok(taskService.listTasks(emailUsuario)).build();
     }
 
-}
+    @GET
+    @Path("/filtro")
+    @RolesAllowed({"ADMIN", "USER"})
+    public Response filtrarTarefas(
+        @QueryParam("status") String status,
+        @QueryParam("dataInicial") String dataInicial,
+        @QueryParam("dataFinal") String dataFinal,
+        @QueryParam("usuario") String usuario,
+        @Context SecurityContext context
+    ) {
+        String emailUsuario = context.getUserPrincipal().getName();
+        return Response.ok(taskService.filtrarTarefas(status, dataInicial, dataFinal, emailUsuario)).build();
+    }
+
+
+    }

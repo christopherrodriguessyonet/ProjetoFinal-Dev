@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
+import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -9,81 +8,39 @@ import MinhasTarefas from './pages/MinhasTarefas';
 import Dashboard from './pages/Dashboard';
 import TaskForm from './pages/TaskForm';
 import CadastrarUsuario from './pages/CadastrarUsuario';
+import MainLayout from './layouts/MainLayout';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: { main: '#1976d2' },
-    secondary: { main: '#dc004e' },
-  },
-});
+const theme = createTheme({ palette: { mode: 'light' } });
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requireAdmin?: boolean;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin }) => {
+const ProtectedRoute = ({ children, requireAdmin = false }: any) => {
   const { isAuthenticated, isAdmin } = useAuth();
-
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (requireAdmin && !isAdmin) return <Navigate to="/home" replace />;
-
   return <>{children}</>;
 };
 
-const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/login" element={<Login />} />
+    <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
+    <Route path="/minhas-tarefas" element={<ProtectedRoute><MainLayout><MinhasTarefas /></MainLayout></ProtectedRoute>} />
+    <Route path="/nova-tarefa" element={<ProtectedRoute><MainLayout><TaskForm /></MainLayout></ProtectedRoute>} />
+    <Route path="/editar-tarefa/:id" element={<ProtectedRoute><MainLayout><TaskForm /></MainLayout></ProtectedRoute>} />
+    <Route path="/dashboard" element={<ProtectedRoute requireAdmin><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
+    <Route path="/cadastrar-usuario" element={<ProtectedRoute requireAdmin><MainLayout><CadastrarUsuario /></MainLayout></ProtectedRoute>} />
+    <Route path="/" element={<Navigate to="/login" replace />} />
+  </Routes>
+);
 
-  return (
-    <Routes>
-      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" replace />} />
-      <Route path="/home" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path="/minhas-tarefas" element={
-        <ProtectedRoute>
-          <MinhasTarefas />
-        </ProtectedRoute>
-      } />
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/nova-tarefa" element={
-        <ProtectedRoute>
-          <TaskForm />
-        </ProtectedRoute>
-      } />
-      <Route path="/editar-tarefa/:id" element={
-        <ProtectedRoute>
-          <TaskForm />
-        </ProtectedRoute>
-      } />
-      <Route path="/cadastrar-usuario" element={
-        <ProtectedRoute requireAdmin>
-          <CadastrarUsuario />
-        </ProtectedRoute>
-      } />
-      <Route path="/" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  );
-};
+const App: React.FC = () => (
+  <BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
+  </BrowserRouter>
+);
 
 export default App;
