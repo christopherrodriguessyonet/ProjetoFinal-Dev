@@ -48,6 +48,7 @@ const CadastrarUsuario: React.FC = () => {
           <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Cadastrar</Button>
         </form>
       </Paper>
+
     </Box>
   );
 };

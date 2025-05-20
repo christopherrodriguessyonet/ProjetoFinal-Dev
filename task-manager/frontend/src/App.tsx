@@ -9,6 +9,7 @@ import MinhasTarefas from './pages/MinhasTarefas';
 import Dashboard from './pages/Dashboard';
 import TaskForm from './pages/TaskForm';
 import CadastrarUsuario from './pages/CadastrarUsuario';
+import ListaUsuarios from './pages/ListaUsuarios';
 import MainLayout from './layouts/MainLayout';
 
 const theme = createTheme({
@@ -44,11 +45,8 @@ const AppRoutes = () => {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/nova-tarefa" element={<ProtectedRoute><TaskForm /></ProtectedRoute>} />
       <Route path="/editar-tarefa/:id" element={<ProtectedRoute><TaskForm /></ProtectedRoute>} />
-      <Route path="/cadastrar-usuario" element={
-        <ProtectedRoute requireAdmin>
-          <CadastrarUsuario />
-        </ProtectedRoute>
-      } />
+      <Route path="/cadastrar-usuario" element={<ProtectedRoute requireAdmin><CadastrarUsuario /></ProtectedRoute>} />
+      <Route path="/lista-usuarios" element={<ProtectedRoute requireAdmin><ListaUsuarios /></ProtectedRoute>} />
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );

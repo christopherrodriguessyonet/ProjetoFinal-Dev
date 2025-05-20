@@ -6,10 +6,10 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Context;
 import java.util.List;
+import jakarta.ws.rs.core.Context;
 
-@RolesAllowed("ADMIN") // ⬅️ Libera acesso a todos os métodos da classe para o grupo ADMIN
+@RolesAllowed("ADMIN") // Libera acesso a todos os métodos da classe para o grupo ADMIN
 @Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -19,8 +19,13 @@ public class UserResource {
     UserService userService;
 
     @GET
-    public List<UserDTO> listUsers() {
-        List<UserDTO> users = userService.listUsers();
+    public List<UserDTO> listUsers(
+        @QueryParam("usuario") String usuario, 
+        @QueryParam("perfil") String perfil) {
+        
+        // Passa os parâmetros para o serviço de usuários
+        List<UserDTO> users = userService.listUsers(usuario, perfil);
+
         if (users == null || users.isEmpty()) {
             throw new WebApplicationException("Nenhum usuário encontrado", 404);
         }
@@ -71,10 +76,10 @@ public class UserResource {
             throw new WebApplicationException("Erro ao deletar usuário: " + e.getMessage(), 400);
         }
     }
+
     @GET
     @Path("/me")
     public String me(@Context jakarta.ws.rs.core.SecurityContext context) {
         return "Usuário: " + context.getUserPrincipal().getName();
     }
-
 }
