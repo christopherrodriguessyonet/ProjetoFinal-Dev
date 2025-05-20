@@ -26,7 +26,7 @@ const Home: React.FC = () => {
       },
       {
         title: '👤 Cadastrar Usuário',
-        description: 'Crie um novo usuário administrador ou comum',
+        description: 'Crie um novo usuário',
         path: '/cadastrar-usuario'
       }
     ] : [])

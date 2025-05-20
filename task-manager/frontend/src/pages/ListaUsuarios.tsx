@@ -144,7 +144,7 @@ const ListaUsuarios: React.FC = () => {
                                 <TableRow key={user.id}>
                                     <TableCell>{user.nome}</TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.perfil}</TableCell>
+                                    <TableCell>{user.role}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"
