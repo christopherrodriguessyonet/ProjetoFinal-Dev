@@ -9,6 +9,7 @@ import MinhasTarefas from './pages/MinhasTarefas';
 import Dashboard from './pages/Dashboard';
 import TaskForm from './pages/TaskForm';
 import CadastrarUsuario from './pages/CadastrarUsuario';
+import MainLayout from './layouts/MainLayout';
 
 const theme = createTheme({
   palette: {
@@ -29,7 +30,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (requireAdmin && !isAdmin) return <Navigate to="/home" replace />;
 
-  return <>{children}</>;
+  return <MainLayout>{children}</MainLayout>;
 };
 
 const AppRoutes = () => {
@@ -38,31 +39,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" replace />} />
-      <Route path="/home" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path="/minhas-tarefas" element={
-        <ProtectedRoute>
-          <MinhasTarefas />
-        </ProtectedRoute>
-      } />
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/nova-tarefa" element={
-        <ProtectedRoute>
-          <TaskForm />
-        </ProtectedRoute>
-      } />
-      <Route path="/editar-tarefa/:id" element={
-        <ProtectedRoute>
-          <TaskForm />
-        </ProtectedRoute>
-      } />
+      <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      <Route path="/minhas-tarefas" element={<ProtectedRoute><MinhasTarefas /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/nova-tarefa" element={<ProtectedRoute><TaskForm /></ProtectedRoute>} />
+      <Route path="/editar-tarefa/:id" element={<ProtectedRoute><TaskForm /></ProtectedRoute>} />
       <Route path="/cadastrar-usuario" element={
         <ProtectedRoute requireAdmin>
           <CadastrarUsuario />

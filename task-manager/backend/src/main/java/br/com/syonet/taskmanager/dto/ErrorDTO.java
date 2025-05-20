@@ -8,4 +8,4 @@ public class ErrorDTO {
         this.message = message;
         this.status = status;
     }
-} 
+}

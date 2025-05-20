@@ -114,6 +114,12 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    private boolean isAdmin(String email) {
+    User user = User.findByEmail(email);
+    return user != null && user.role == User.UserRole.ADMIN;
+}
+
+
    public List<TaskDTO> filtrarTarefas(String status, String dataInicial, String dataFinal, String usuario, String emailAutenticado) {
     return taskRepository.listAll().stream()
         .filter(task -> {
@@ -153,8 +159,4 @@ public class TaskService {
         .map(this::toDTO)
         .collect(Collectors.toList());
 }
-
-
-
-
 }

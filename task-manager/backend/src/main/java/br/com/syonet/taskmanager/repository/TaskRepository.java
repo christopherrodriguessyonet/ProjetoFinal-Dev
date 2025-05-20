@@ -6,4 +6,4 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class TaskRepository implements PanacheRepository<Task> {
-}
+} 

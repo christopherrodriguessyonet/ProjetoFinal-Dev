@@ -25,4 +25,4 @@ public class Task {
 
     @Column(name = "data_entrega")
     private LocalDateTime dataEntrega;
-}
+} 

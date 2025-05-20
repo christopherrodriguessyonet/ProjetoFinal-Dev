@@ -30,4 +30,4 @@ public class User extends PanacheEntityBase {
     public static User findByEmail(String email) {
         return find("email", email).firstResult();
     }
-}
+} 

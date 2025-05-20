@@ -86,6 +86,4 @@ import jakarta.ws.rs.core.SecurityContext;
         String emailUsuario = context.getUserPrincipal().getName();
         return Response.ok(taskService.filtrarTarefas(status, dataInicial, dataFinal, emailUsuario)).build();
     }
-
-
     }
