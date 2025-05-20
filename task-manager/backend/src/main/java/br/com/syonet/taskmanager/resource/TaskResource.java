@@ -33,7 +33,7 @@ import jakarta.ws.rs.core.SecurityContext;
         AuthService authService;
 
         @POST
-        @Consumes(MediaType.APPLICATION_JSON) // ← aqui sim
+        @Consumes(MediaType.APPLICATION_JSON)
         @RolesAllowed({"ADMIN", "USER"})
         public Response criar(@Valid TaskDTO taskDTO, @Context SecurityContext context) {
             String emailUsuario = context.getUserPrincipal().getName();
@@ -80,6 +80,7 @@ import jakarta.ws.rs.core.SecurityContext;
         @QueryParam("status") String status,
         @QueryParam("dataInicial") String dataInicial,
         @QueryParam("dataFinal") String dataFinal,
+        @QueryParam("usuario") String usuario,
         @Context SecurityContext context
     ) {
         String emailUsuario = context.getUserPrincipal().getName();

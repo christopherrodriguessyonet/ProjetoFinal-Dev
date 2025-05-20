@@ -114,18 +114,22 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-   ppublic List<TaskDTO> filtrarTarefas(String status, String dataInicial, String dataFinal, String userEmail) {
+   public List<TaskDTO> filtrarTarefas(String status, String dataInicial, String dataFinal, String usuario, String emailAutenticado) {
     return taskRepository.listAll().stream()
         .filter(task -> {
-            // 1. Visibilidade: Admin vê tudo, usuário comum só o que ele criou
-            boolean visivel = isAdmin(userEmail) ||
-                (task.getResponsavel() != null && userEmail.equalsIgnoreCase(task.getResponsavel()));
+            // Visibilidade
+            boolean isAdmin = isAdmin(emailAutenticado);
+            String responsavel = task.getResponsavel();
 
-            // 2. Filtro por status
+            boolean visivel = isAdmin
+                ? (usuario == null || usuario.isBlank() || (responsavel != null && responsavel.equalsIgnoreCase(usuario)))
+                : (responsavel != null && responsavel.equalsIgnoreCase(emailAutenticado));
+
+            // Filtro por status
             boolean correspondeStatus = (status == null || status.isBlank())
                 || status.equalsIgnoreCase(task.getStatus());
 
-            // 3. Filtro por data de entrega
+            // Filtro por data
             boolean dentroDoPeriodo = true;
             LocalDateTime dataEntrega = task.getDataEntrega();
             if (dataEntrega == null) return false;
@@ -141,7 +145,6 @@ public class TaskService {
                     dentroDoPeriodo &= !dataEntrega.isAfter(fim);
                 }
             } catch (Exception e) {
-                System.out.println("Erro ao converter datas: " + e.getMessage());
                 return false;
             }
 
@@ -150,6 +153,7 @@ public class TaskService {
         .map(this::toDTO)
         .collect(Collectors.toList());
 }
+
 
 
 

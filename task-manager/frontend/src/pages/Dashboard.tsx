@@ -26,6 +26,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/pt-br';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 dayjs.locale('pt-br');
 
@@ -44,9 +45,10 @@ const Dashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [dataInicial, setDataInicial] = useState<Dayjs | null>(null);
   const [dataFinal, setDataFinal] = useState<Dayjs | null>(null);
+  const [usuarioFilter, setUsuarioFilter] = useState<string>('');
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
-  // Carrega todas as tarefas ao abrir a página
   useEffect(() => {
     const loadAll = async () => {
       try {
@@ -56,7 +58,6 @@ const Dashboard: React.FC = () => {
         console.error('Erro ao carregar tarefas iniciais:', error);
       }
     };
-
     loadAll();
   }, []);
 
@@ -68,6 +69,7 @@ const Dashboard: React.FC = () => {
       if (statusFilter) params.append('status', statusFilter);
       if (dataInicial) params.append('dataInicial', dataInicial.format('YYYY-MM-DD'));
       if (dataFinal) params.append('dataFinal', dataFinal.format('YYYY-MM-DD'));
+      if (isAdmin && usuarioFilter) params.append('usuario', usuarioFilter);
 
       if (params.toString() !== '') {
         url = `/tasks/filtro?${params.toString()}`;
@@ -84,6 +86,7 @@ const Dashboard: React.FC = () => {
     setStatusFilter('');
     setDataInicial(null);
     setDataFinal(null);
+    setUsuarioFilter('');
     try {
       const response = await api.get('/tasks');
       setTasks(response.data);
@@ -141,6 +144,17 @@ const Dashboard: React.FC = () => {
             />
           </Box>
 
+          {isAdmin && (
+            <Box sx={{ width: '250px' }}>
+              <TextField
+                label="Filtrar por usuário"
+                value={usuarioFilter}
+                onChange={(e) => setUsuarioFilter(e.target.value)}
+                fullWidth
+              />
+            </Box>
+          )}
+
           <IconButton
             color="primary"
             onClick={fetchTasks}
@@ -158,7 +172,6 @@ const Dashboard: React.FC = () => {
             Limpar
           </Button>
         </Stack>
-
       </LocalizationProvider>
 
       <TableContainer component={Paper}>
@@ -175,39 +188,47 @@ const Dashboard: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell>{task.titulo}</TableCell>
-                <TableCell>{task.descricao}</TableCell>
-                <TableCell>{task.status}</TableCell>
-                <TableCell>{task.responsavel}</TableCell>
-                <TableCell>{task.completo ? 'Sim' : 'Não'}</TableCell>
-                <TableCell>
-                  {task.dataEntrega
-                    ? dayjs(task.dataEntrega).format('DD/MM/YYYY HH:mm')
-                    : '-'}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={() => navigate(`/editar-tarefa/${task.id}`)}
-                    sx={{ mr: 1 }}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    onClick={() => handleDelete(task.id)}
-                  >
-                    Excluir
-                  </Button>
+            {tasks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  Nenhuma tarefa encontrada.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              tasks.map((task) => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.titulo}</TableCell>
+                  <TableCell>{task.descricao}</TableCell>
+                  <TableCell>{task.status}</TableCell>
+                  <TableCell>{task.responsavel}</TableCell>
+                  <TableCell>{task.completo ? 'Sim' : 'Não'}</TableCell>
+                  <TableCell>
+                    {task.dataEntrega
+                      ? dayjs(task.dataEntrega).format('DD/MM/YYYY HH:mm')
+                      : '-'}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => navigate(`/editar-tarefa/${task.id}`)}
+                      sx={{ mr: 1 }}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      onClick={() => handleDelete(task.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
