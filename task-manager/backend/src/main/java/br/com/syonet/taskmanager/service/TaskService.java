@@ -79,7 +79,7 @@ public class TaskService {
         return toDTO(task);
     }
 
-        @Transactional
+    @Transactional
     public TaskDTO createTask(TaskDTO taskDTO, String userEmail) {
     taskDTO.setResponsavel(userEmail);
     return createTask(taskDTO);
@@ -128,8 +128,9 @@ public class TaskService {
             String responsavel = task.getResponsavel();
 
             boolean visivel = isAdmin
-                ? (usuario == null || usuario.isBlank() || (responsavel != null && responsavel.equalsIgnoreCase(usuario)))
-                : (responsavel != null && responsavel.equalsIgnoreCase(emailAutenticado));
+            ? (usuario == null || usuario.isBlank() || (responsavel != null && responsavel.toLowerCase().contains(usuario.toLowerCase())))
+            : (responsavel != null && responsavel.equalsIgnoreCase(emailAutenticado));
+
 
             // Filtro por status
             boolean correspondeStatus = (status == null || status.isBlank())
