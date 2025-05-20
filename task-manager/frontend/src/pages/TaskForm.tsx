@@ -9,7 +9,8 @@ import {
   Box,
   FormControlLabel,
   Checkbox,
-  MenuItem
+  MenuItem,
+  Alert,
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -36,6 +37,9 @@ const TaskForm: React.FC = () => {
     dataEntrega: '',
   });
 
+  const [sucesso, setSucesso] = useState('');
+  const [erro, setErro] = useState('');
+
   useEffect(() => {
     if (id) {
       api.get(`/tasks/${id}`).then(res => {
@@ -59,21 +63,27 @@ const TaskForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErro('');
+    setSucesso('');
     try {
       if (id) {
         await api.put(`/tasks/${id}`, form);
+        setSucesso('Tarefa atualizada com sucesso!');
       } else {
         await api.post('/tasks', form);
+        setSucesso('Tarefa criada com sucesso!');
       }
 
-      if (user?.groups.includes('ADMIN')) {
-        navigate('/dashboard');
-      } else {
-        navigate('/minhas-tarefas');
-      }
+      setTimeout(() => {
+        if (user?.groups.includes('ADMIN')) {
+          navigate('/dashboard');
+        } else {
+          navigate('/minhas-tarefas');
+        }
+      }, 1500);
     } catch (err: any) {
       console.error('Erro ao salvar tarefa:', err);
-      alert('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+      setErro('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
     }
   };
 
@@ -83,6 +93,10 @@ const TaskForm: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           {id ? 'Editar Tarefa' : 'Nova Tarefa'}
         </Typography>
+
+        {erro && <Alert severity="error" sx={{ mb: 2 }}>{erro}</Alert>}
+        {sucesso && <Alert severity="success" sx={{ mb: 2 }}>{sucesso}</Alert>}
+
         <form onSubmit={handleSubmit}>
           <TextField
             label="Título"

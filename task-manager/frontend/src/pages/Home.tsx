@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Box, Typography, Paper } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,29 +7,49 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAdmin, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
+  const cards = [
+    {
+      title: '📋 Minhas Tarefas',
+      description: 'Acesse todas suas tarefas',
+      path: '/minhas-tarefas'
+    },
+    {
+      title: '➕ Nova Tarefa',
+      description: 'Crie uma nova tarefa',
+      path: '/nova-tarefa'
+    },
+    ...(isAdmin ? [
+      {
+        title: '📊 Dashboard',
+        description: 'Veja todas as tarefas do sistema',
+        path: '/dashboard'
+      },
+      {
+        title: '👤 Cadastrar Usuário',
+        description: 'Crie um novo usuário administrador ou comum',
+        path: '/cadastrar-usuario'
+      }
+    ] : [])
+  ];
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="100vh">
-      <Paper elevation={3} sx={{ p: 4, minWidth: 320, mb: 2 }}>
-        <Typography variant="h4" mb={2}>Bem-vindo, {user?.sub || 'Usuário'}!</Typography>
+    <Box p={4}>
+      <Typography variant="h4" gutterBottom>
+        Bem-vindo, {user?.sub || 'usuário'}!
+      </Typography>
 
-        <Button variant="contained" color="primary" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/minhas-tarefas')}>Minhas Tarefas</Button>
-        <Button variant="contained" color="secondary" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/nova-tarefa')}>Adicionar Nova Tarefa</Button>
-
-        {isAdmin && (
-          <>
-            <Button variant="contained" color="info" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/dashboard')}>Dashboard</Button>
-            <Button variant="contained" color="success" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/cadastrar-usuario')}>Cadastrar Usuário</Button>
-          </>
-        )}
-
-        <Button variant="outlined" color="primary" fullWidth sx={{ mb: 2 }} onClick={() => navigate('/home')}>Home</Button>
-        <Button variant="outlined" color="error" fullWidth onClick={handleLogout}>Sair</Button>
-      </Paper>
+      <Grid container spacing={3} mt={2}>
+        {cards.map((card, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card sx={{ cursor: 'pointer', transition: '0.3s', '&:hover': { transform: 'scale(1.03)' } }} onClick={() => navigate(card.path)}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>{card.title}</Typography>
+                <Typography variant="body2" color="text.secondary">{card.description}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 };
