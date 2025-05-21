@@ -76,14 +76,24 @@ const TaskForm: React.FC = () => {
 
       setTimeout(() => {
         if (user?.groups.includes('ADMIN')) {
-          navigate('/dashboard');
+          navigate('/home');
         } else {
           navigate('/minhas-tarefas');
         }
       }, 1500);
     } catch (err: any) {
       console.error('Erro ao salvar tarefa:', err);
-      setErro('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+
+      if (err.response?.status === 400 && typeof err.response.data === 'object') {
+        const mensagens = Object.values(err.response.data);
+        if (mensagens.length > 0) {
+          setErro(mensagens.join('\n'));
+        } else {
+          setErro('Erro de validação. Verifique os campos.');
+        }
+      } else {
+        setErro('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+      }
     }
   };
 
@@ -181,4 +191,4 @@ const TaskForm: React.FC = () => {
   );
 };
 
-export default TaskForm; 
+export default TaskForm;
