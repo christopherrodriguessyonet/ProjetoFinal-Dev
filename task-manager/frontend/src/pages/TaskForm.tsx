@@ -72,6 +72,16 @@ const TaskForm: React.FC = () => {
     setErro('');
     setSucesso('');
 
+    if (form.descricao.trim().length < 10) {
+      setErro('A descrição deve ter no mínimo 10 caracteres.');
+      return;
+    }
+
+    if (form.titulo.trim().length < 3) {
+      setErro('O título deve ter no mínimo 3 caracteres.');
+      return;
+    }
+
     try {
       if (id) {
         await api.put(`/tasks/${id}`, form);
@@ -80,6 +90,7 @@ const TaskForm: React.FC = () => {
         await api.post('/tasks', form);
         setSucesso('Tarefa criada com sucesso!');
       }
+
 
       setTimeout(() => {
         if (user?.groups.includes('ADMIN')) {
@@ -123,6 +134,7 @@ const TaskForm: React.FC = () => {
             fullWidth
             margin="normal"
             required
+            inputProps={{ minLength: 3 }}
           />
           <TextField
             label="Descrição"
@@ -132,6 +144,7 @@ const TaskForm: React.FC = () => {
             fullWidth
             margin="normal"
             required
+            inputProps={{ minLength: 10 }}
           />
           <TextField
             select

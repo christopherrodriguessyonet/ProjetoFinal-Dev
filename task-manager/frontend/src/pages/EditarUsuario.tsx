@@ -47,6 +47,17 @@ const EditarUsuario: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErro('');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            setErro('Por favor, informe um e-mail válido.');
+            return;
+        }
+
+        if (nome.trim().length < 3) {
+            setErro('O nome deve ter no mínimo 3 caracteres.');
+            return;
+        }
         try {
             await api.put(`/users/${id}`, {
                 nome,
@@ -73,6 +84,7 @@ const EditarUsuario: React.FC = () => {
                         value={nome}
                         onChange={e => setNome(e.target.value)}
                         required
+                        inputProps={{ minLength: 3 }}
                     />
                     <TextField
                         label="E-mail"
@@ -89,6 +101,8 @@ const EditarUsuario: React.FC = () => {
                         margin="normal"
                         value={senha}
                         onChange={e => setSenha(e.target.value)}
+                        required
+                        inputProps={{ minLength: 8 }}
                     />
                     <TextField
                         select
