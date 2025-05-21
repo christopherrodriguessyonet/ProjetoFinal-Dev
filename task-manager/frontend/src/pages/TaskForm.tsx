@@ -37,6 +37,7 @@ const TaskForm: React.FC = () => {
     dataEntrega: '',
   });
 
+  const [usuarios, setUsuarios] = useState<string[]>([]);
   const [sucesso, setSucesso] = useState('');
   const [erro, setErro] = useState('');
 
@@ -49,6 +50,11 @@ const TaskForm: React.FC = () => {
             ? res.data.dataEntrega.substring(0, 16)
             : '',
         });
+      });
+
+      api.get('/users').then(res => {
+        const emails = res.data.map((u: any) => u.email);
+        setUsuarios(emails);
       });
     }
   }, [id]);
@@ -65,6 +71,7 @@ const TaskForm: React.FC = () => {
     e.preventDefault();
     setErro('');
     setSucesso('');
+
     try {
       if (id) {
         await api.put(`/tasks/${id}`, form);
@@ -140,15 +147,37 @@ const TaskForm: React.FC = () => {
             <MenuItem value="ANDAMENTO">ANDAMENTO</MenuItem>
             <MenuItem value="CONCLUIDO">CONCLUÍDO</MenuItem>
           </TextField>
-          <TextField
-            label="Responsável"
-            name="responsavel"
-            value={form.responsavel}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-          />
+
+          {id ? (
+            <TextField
+              select
+              label="Responsável"
+              name="responsavel"
+              value={form.responsavel}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            >
+              {usuarios.map((email) => (
+                <MenuItem key={email} value={email}>
+                  {email}
+                </MenuItem>
+              ))}
+            </TextField>
+          ) : (
+            <TextField
+              label="Responsável"
+              name="responsavel"
+              type="email"
+              value={form.responsavel}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          )}
+
           <TextField
             label="Data de Entrega"
             name="dataEntrega"
