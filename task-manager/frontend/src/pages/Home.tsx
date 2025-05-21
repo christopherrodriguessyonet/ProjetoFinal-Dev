@@ -28,6 +28,11 @@ const Home: React.FC = () => {
         title: '👤 Cadastrar Usuário',
         description: 'Crie um novo usuário',
         path: '/cadastrar-usuario'
+      },
+      {
+        title: '👤 Usuários',
+        description: 'Veja todos os usuários',
+        path: '/lista-usuarios'
       }
     ] : [])
   ];
