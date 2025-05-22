@@ -8,6 +8,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Context;
 import java.util.List;
+import jakarta.ws.rs.core.Response;
 
 @RolesAllowed("ADMIN")
 @Path("/api/users")
@@ -41,8 +42,9 @@ public class UserResource {
     }
 
     @POST
-    public UserDTO createUser(UserDTO userDTO) {
-        return userService.createUser(userDTO);
+    public Response createUser(UserDTO userDTO) {
+        UserDTO createdUser = userService.createUser(userDTO);
+        return Response.status(Response.Status.CREATED).entity(createdUser).build();
     }
 
     @PUT

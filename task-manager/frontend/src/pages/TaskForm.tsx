@@ -37,6 +37,7 @@ const TaskForm: React.FC = () => {
     dataEntrega: '',
   });
 
+  const [usuarios, setUsuarios] = useState<string[]>([]);
   const [sucesso, setSucesso] = useState('');
   const [erro, setErro] = useState('');
 
@@ -49,6 +50,11 @@ const TaskForm: React.FC = () => {
             ? res.data.dataEntrega.substring(0, 16)
             : '',
         });
+      });
+
+      api.get('/users').then(res => {
+        const emails = res.data.map((u: any) => u.email);
+        setUsuarios(emails);
       });
     }
   }, [id]);
@@ -65,6 +71,17 @@ const TaskForm: React.FC = () => {
     e.preventDefault();
     setErro('');
     setSucesso('');
+
+    if (form.descricao.trim().length < 10) {
+      setErro('A descrição deve ter no mínimo 10 caracteres.');
+      return;
+    }
+
+    if (form.titulo.trim().length < 3) {
+      setErro('O título deve ter no mínimo 3 caracteres.');
+      return;
+    }
+
     try {
       if (id) {
         await api.put(`/tasks/${id}`, form);
@@ -74,16 +91,27 @@ const TaskForm: React.FC = () => {
         setSucesso('Tarefa criada com sucesso!');
       }
 
+
       setTimeout(() => {
         if (user?.groups.includes('ADMIN')) {
-          navigate('/dashboard');
+          navigate('/home');
         } else {
           navigate('/minhas-tarefas');
         }
       }, 1500);
     } catch (err: any) {
       console.error('Erro ao salvar tarefa:', err);
-      setErro('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+
+      if (err.response?.status === 400 && typeof err.response.data === 'object') {
+        const mensagens = Object.values(err.response.data);
+        if (mensagens.length > 0) {
+          setErro(mensagens.join('\n'));
+        } else {
+          setErro('Erro de validação. Verifique os campos.');
+        }
+      } else {
+        setErro('Erro ao salvar a tarefa. Veja o console para mais detalhes.');
+      }
     }
   };
 
@@ -106,6 +134,7 @@ const TaskForm: React.FC = () => {
             fullWidth
             margin="normal"
             required
+            inputProps={{ minLength: 3 }}
           />
           <TextField
             label="Descrição"
@@ -115,6 +144,7 @@ const TaskForm: React.FC = () => {
             fullWidth
             margin="normal"
             required
+            inputProps={{ minLength: 10 }}
           />
           <TextField
             select
@@ -130,15 +160,37 @@ const TaskForm: React.FC = () => {
             <MenuItem value="ANDAMENTO">ANDAMENTO</MenuItem>
             <MenuItem value="CONCLUIDO">CONCLUÍDO</MenuItem>
           </TextField>
-          <TextField
-            label="Responsável"
-            name="responsavel"
-            value={form.responsavel}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-          />
+
+          {id ? (
+            <TextField
+              select
+              label="Responsável"
+              name="responsavel"
+              value={form.responsavel}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            >
+              {usuarios.map((email) => (
+                <MenuItem key={email} value={email}>
+                  {email}
+                </MenuItem>
+              ))}
+            </TextField>
+          ) : (
+            <TextField
+              label="Responsável"
+              name="responsavel"
+              type="email"
+              value={form.responsavel}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              required
+            />
+          )}
+
           <TextField
             label="Data de Entrega"
             name="dataEntrega"
@@ -181,4 +233,4 @@ const TaskForm: React.FC = () => {
   );
 };
 
-export default TaskForm; 
+export default TaskForm;

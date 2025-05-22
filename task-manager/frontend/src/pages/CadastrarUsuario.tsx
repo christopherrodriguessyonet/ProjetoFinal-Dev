@@ -21,6 +21,18 @@ const CadastrarUsuario: React.FC = () => {
     e.preventDefault();
     setErro('');
     setSucesso('');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      setErro('Por favor, informe um e-mail válido.');
+      return;
+    }
+
+    if (nome.trim().length < 3) {
+      return;
+    }
+
     try {
       await api.post('/users', { email, nome, senha, role });
       setSucesso('Usuário cadastrado com sucesso!');
@@ -35,10 +47,43 @@ const CadastrarUsuario: React.FC = () => {
       <Paper elevation={3} sx={{ p: 4, minWidth: 320 }}>
         <Typography variant="h5" mb={2}>Cadastrar Usuário</Typography>
         <form onSubmit={handleSubmit}>
-          <TextField label="E-mail" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} required />
-          <TextField label="Nome" fullWidth margin="normal" value={nome} onChange={e => setNome(e.target.value)} required />
-          <TextField label="Senha" type="password" fullWidth margin="normal" value={senha} onChange={e => setSenha(e.target.value)} required />
-          <TextField select label="Tipo" fullWidth margin="normal" value={role} onChange={e => setRole(e.target.value)} required>
+          <TextField
+            label="E-mail"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            type="email"
+          />
+          <TextField
+            label="Nome"
+            fullWidth
+            margin="normal"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+            required
+            inputProps={{ minLength: 3 }}
+          />
+          <TextField
+            label="Senha"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={senha}
+            onChange={e => setSenha(e.target.value)}
+            required
+            inputProps={{ minLength: 8 }}
+          />
+          <TextField
+            select
+            label="Tipo"
+            fullWidth
+            margin="normal"
+            value={role}
+            onChange={e => setRole(e.target.value)}
+            required
+          >
             {roles.map(option => (
               <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
             ))}
@@ -48,7 +93,6 @@ const CadastrarUsuario: React.FC = () => {
           <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Cadastrar</Button>
         </form>
       </Paper>
-
     </Box>
   );
 };

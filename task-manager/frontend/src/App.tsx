@@ -11,6 +11,7 @@ import TaskForm from './pages/TaskForm';
 import CadastrarUsuario from './pages/CadastrarUsuario';
 import ListaUsuarios from './pages/ListaUsuarios';
 import MainLayout from './layouts/MainLayout';
+import EditarUsuario from './pages/EditarUsuario';
 
 const theme = createTheme({
   palette: {
@@ -48,6 +49,7 @@ const AppRoutes = () => {
       <Route path="/cadastrar-usuario" element={<ProtectedRoute requireAdmin><CadastrarUsuario /></ProtectedRoute>} />
       <Route path="/lista-usuarios" element={<ProtectedRoute requireAdmin><ListaUsuarios /></ProtectedRoute>} />
       <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/editar-usuario/:id" element={<ProtectedRoute requireAdmin><EditarUsuario /></ProtectedRoute>} />
     </Routes>
   );
 };
