@@ -70,14 +70,20 @@ public class TaskService {
 
 
 
-    public TaskDTO getTask(Long id, String userEmail) {
-        Task task = taskRepository.findById(id);
-        if (task == null) {
-            throw new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.Status.NOT_FOUND);
-        }
-        // validar se o usuário tem permissão, se necessário
-        return toDTO(task);
+    public TaskDTO getTask(Long id, String userEmail) throws WebApplicationException {
+    Task task = taskRepository.findById(id);
+    if (task == null) {
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
+
+    if (!userEmail.equalsIgnoreCase(task.getResponsavel()) && !isAdmin(userEmail)) {
+        throw new WebApplicationException(Response.Status.FORBIDDEN);
+    }
+
+    return toDTO(task);
+}
+
+
 
     @Transactional
     public TaskDTO createTask(TaskDTO taskDTO, String userEmail) {

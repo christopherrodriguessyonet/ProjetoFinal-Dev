@@ -1,76 +1,45 @@
-# backend
+# Task Manager
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Sistema de gerenciamento de tarefas com autenticação e controle de acesso por perfil de usuário.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Tecnologias utilizadas
 
-## Running the application in dev mode
+### Backend
+- Java 17
+- Quarkus
+- Hibernate ORM com Panache
+- PostgreSQL
+- JWT (autenticação)
+- RESTEasy Reactive
+- Docker + Docker Compose
 
-You can run your application in dev mode that enables live coding using:
+### Frontend
+- React
+- TypeScript
+- Material UI (MUI)
+- Axios
+- React Router
 
-```shell script
-./mvnw quarkus:dev
-```
+## Funcionalidades
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+### Usuários
+- Login e cadastro com validação
+- Acesso controlado por perfil (`ADMIN`, `USER`)
+- ADMIN pode listar, criar, editar e excluir usuários
 
-## Packaging and running the application
+### Tarefas
+- Criação, listagem, edição e exclusão de tarefas
+- Filtro por status, data e responsável
+- Usuário comum vê apenas suas tarefas
+- ADMIN vê todas as tarefas
 
-The application can be packaged using:
+### Segurança
+- Autenticação com JWT
+- Refresh token implementado
+- Controle de rotas no frontend com base na role
 
-```shell script
-./mvnw package
-```
+### Testes
+Para rodar os testes precisará comentar a linha do application.properties em "quarkus.datasource.jdbc.url=jdbc:postgresql://postgres:5432/taskmanager"
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/backend-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- REST resources for Hibernate ORM with Panache ([guide](https://quarkus.io/guides/rest-data-panache)): Generate Jakarta REST resources for your Hibernate Panache entities and repositories
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- SmallRye JWT ([guide](https://quarkus.io/guides/security-jwt)): Secure your applications with JSON Web Token
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
-
-## Provided Code
-
-### REST Data with Panache
-
-Generating Jakarta REST resources with Panache
-
-[Related guide section...](https://quarkus.io/guides/rest-data-panache)
-
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+### Inicialização do projeto
+Para executar o projeto, basta estar na pasta principal e executar ./starh.sh

@@ -47,7 +47,6 @@ const CadastrarUsuario: React.FC = () => {
       <Paper elevation={3} sx={{ p: 4, minWidth: 320 }}>
         <Typography variant="h5" mb={2}>Cadastrar Usuário</Typography>
         <form onSubmit={handleSubmit}>
-          {/* ⬇️ Campo com validação de e-mail no handleSubmit */}
           <TextField
             label="E-mail"
             fullWidth
@@ -57,7 +56,6 @@ const CadastrarUsuario: React.FC = () => {
             required
             type="email"
           />
-          {/* ⬇️ Campo com validação de mínimo de caracteres no handleSubmit */}
           <TextField
             label="Nome"
             fullWidth
