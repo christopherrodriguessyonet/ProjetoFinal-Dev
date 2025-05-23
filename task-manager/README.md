@@ -45,4 +45,5 @@ e executr ./mvnw quarkus:dev
 ### Inicialização do projeto
 Para executar o projeto, basta estar na pasta principal e executar ./start.sh
 
--Para logar como usuário e fazer os testes, crie um novo usuário a partir do admin: admin@taskmanager.com, senha: admin123
+-Para logar como USER e fazer os testes crie um novo usuário a partir do admin: admin@taskmanager.com, senha: admin123
+-Para executar o projeto precisará ter a versão v20.19.2 do NODE, e do JAVA 17.
