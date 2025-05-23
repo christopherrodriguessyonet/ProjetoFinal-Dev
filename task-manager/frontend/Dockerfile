@@ -2,13 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copia apenas os arquivos de dependência para instalar primeiro
+COPY package.json package-lock.json* ./
 
-# Instala dependências, incluindo jwt-decode
-RUN npm install \
-    && npm install jwt-decode \
-    && npm install --save-dev @types/jwt-decode
+# Instala todas as dependências do projeto
+RUN npm install
 
+# Copia o restante dos arquivos da aplicação
 COPY . .
 
 EXPOSE 3000

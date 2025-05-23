@@ -15,7 +15,6 @@ import static org.hamcrest.Matchers.*;
 @QuarkusTest
 public class TaskResourceTest {
 
-    private String tokenUser;
     private String tokenAdmin;
 
     @BeforeEach

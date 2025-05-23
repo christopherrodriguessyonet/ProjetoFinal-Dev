@@ -40,6 +40,9 @@ Sistema de gerenciamento de tarefas com autenticação e controle de acesso por 
 
 ### Testes
 Para rodar os testes precisará comentar a linha do application.properties em "quarkus.datasource.jdbc.url=jdbc:postgresql://postgres:5432/taskmanager"
+e executr ./mvnw quarkus:dev
 
 ### Inicialização do projeto
-Para executar o projeto, basta estar na pasta principal e executar ./starh.sh
+Para executar o projeto, basta estar na pasta principal e executar ./start.sh
+
+-Para logar como usuário e fazer os testes, crie um novo usuário a partir do admin: admin@taskmanager.com, senha: admin123

@@ -18,6 +18,16 @@ CREATE TABLE IF NOT EXISTS tasks (
     data_entrega TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS logs (
+    id SERIAL PRIMARY KEY,
+    usuario VARCHAR(255),
+    acao VARCHAR(100),
+    entidade VARCHAR(100),
+    entidade_id BIGINT,
+    data_hora TIMESTAMP
+);
+
+
 -- Criar usuário admin inicial (senha: admin123, hash gerado pelo endpoint /api/auth/hash)
 INSERT INTO users (email, nome, senha, role)
 VALUES ('admin@taskmanager.com', 'Administrador',
@@ -27,9 +37,6 @@ VALUES ('admin@taskmanager.com', 'Administrador',
 INSERT INTO users (email, nome, senha, role)
 VALUES ('user@taskmanager.com', 'Usuário Teste',
 '$2a$12$jWO6mZhKVCDy1yqM0N/HU.O9U.dHbZX5W4P3spYGgGHE3ZUiYmQZi', 'USER');
-
--- Adicionar coluna data_entrega na tabela tasks, se não existir
-ALTER TABLE tasks ADD COLUMN IF NOT EXISTS data_entrega TIMESTAMP;
 
 -- Criar tarefa inicial
 INSERT INTO tasks (titulo, descricao, status, responsavel, completo, data_entrega)

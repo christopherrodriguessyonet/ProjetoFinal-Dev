@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 import br.com.syonet.taskmanager.entity.User;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+
 
 
 
@@ -20,18 +23,15 @@ public class TaskService {
     @Inject
     TaskRepository taskRepository;
 
+    @Inject
+    LogService logService;
+
     public List<TaskDTO> getAllTasks() {
         return taskRepository.listAll().stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
-    @Transactional
-    public TaskDTO createTask(TaskDTO taskDTO) {
-        Task task = toEntity(taskDTO);
-        taskRepository.persist(task);
-        return toDTO(task);
-    }
 
     private TaskDTO toDTO(Task task) {
         TaskDTO dto = new TaskDTO();
@@ -84,31 +84,34 @@ public class TaskService {
 }
 
 
-
     @Transactional
     public TaskDTO createTask(TaskDTO taskDTO, String userEmail) {
     taskDTO.setResponsavel(userEmail);
-    return createTask(taskDTO);
+    Task task = toEntity(taskDTO);
+    taskRepository.persist(task);
+    logService.registrar(userEmail, "CRIAR", "TASK", task.getId());
+    return toDTO(task);
 }
-
 
 
     @Transactional
     public TaskDTO updateTask(Long id, TaskDTO dto, String userEmail) {
-        Task task = taskRepository.findById(id);
-        if (task == null) {
-            throw new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.Status.NOT_FOUND);
-        }
+    Task task = taskRepository.findById(id);
+    if (task == null) {
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
 
-        task.setTitulo(dto.getTitulo());
-        task.setDescricao(dto.getDescricao());
-        task.setStatus(dto.getStatus());
-        task.setResponsavel(dto.getResponsavel());
-        task.setCompleto(dto.getCompleto());
-        task.setDataEntrega(dto.getDataEntrega());
+    task.setTitulo(dto.getTitulo());
+    task.setDescricao(dto.getDescricao());
+    task.setStatus(dto.getStatus());
+    task.setResponsavel(dto.getResponsavel());
+    task.setCompleto(dto.getCompleto());
+    task.setDataEntrega(dto.getDataEntrega());
 
-        return toDTO(task);
-}
+    logService.registrar(userEmail, "EDITAR", "TASK", task.getId()); // Log de edição
+
+    return toDTO(task);
+    }
 
 
     @Transactional
