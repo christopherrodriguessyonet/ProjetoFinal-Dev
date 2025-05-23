@@ -27,6 +27,7 @@ import 'dayjs/locale/pt-br';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Snackbar } from '@mui/material';
 
 dayjs.locale('pt-br');
 
@@ -48,6 +49,7 @@ const Dashboard: React.FC = () => {
   const [usuarioFilter, setUsuarioFilter] = useState<string>('');
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
+  const [sucesso, setSucesso] = useState('');
 
   useEffect(() => {
     const loadAll = async () => {
@@ -98,6 +100,7 @@ const Dashboard: React.FC = () => {
   const handleDelete = async (id: number) => {
     await api.delete(`/tasks/${id}`);
     fetchTasks();
+    setSucesso('Tarefa excluída com sucesso');
   };
 
   return (
@@ -232,6 +235,13 @@ const Dashboard: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={!!sucesso}
+        autoHideDuration={3000}
+        onClose={() => setSucesso('')}
+        message={sucesso}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      />
     </Box>
   );
 };
