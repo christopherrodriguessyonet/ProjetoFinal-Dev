@@ -23,6 +23,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+import { Snackbar } from '@mui/material';
 
 const ListaUsuarios: React.FC = () => {
     const [users, setUsers] = useState<any[]>([]);
@@ -30,6 +31,7 @@ const ListaUsuarios: React.FC = () => {
     const [perfilFilter, setPerfilFilter] = useState<string>('');
     const navigate = useNavigate();
     const { isAdmin } = useAuth();
+    const [sucesso, setSucesso] = useState('');
 
     useEffect(() => {
         fetchUsers(); // Carrega os usuários ao carregar o componente
@@ -69,6 +71,7 @@ const ListaUsuarios: React.FC = () => {
     const handleDelete = async (id: number) => {
         await api.delete(`/users/${id}`);
         fetchUsers();
+        setSucesso('Usuário excluído com sucesso');
     };
 
     return (
@@ -170,6 +173,13 @@ const ListaUsuarios: React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Snackbar
+                open={!!sucesso}
+                autoHideDuration={3000}
+                onClose={() => setSucesso('')}
+                message={sucesso}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            />
         </Box>
     );
 };
