@@ -48,3 +48,5 @@ Para realizar os testes como usuário, crie um novo usuário a partir da conta d
 Para executar o projeto, é necessário ter instalado o Node.js na versão 20.19.2 e o Java na versão 17.
 Adicione a pasta principal do projeto (/ProjetoFinal-dev/taskmanager) no recurso "File Share" do Docker Desktop, para que o projeto seja localizado corretamente.
 Acesse a URL do frontend utilizando uma guia anônima no navegador.
+
+Para verificação mais rápida do projeto é possível acessar ao vídeo e verificar a aplicação subindo e teste principais - https://drive.google.com/file/d/1RGOWC1aFgIcjvqN6qg9MkkUMsD21PwJU/view?usp=sharing
