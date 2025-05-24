@@ -44,6 +44,7 @@ e executr ./mvnw quarkus:dev
 
 ### Inicialização do projeto
 Para executar o projeto, basta estar na pasta principal e executar ./start.sh
-
--Para logar como USER e fazer os testes crie um novo usuário a partir do admin: admin@taskmanager.com, senha: admin123
--Para executar o projeto precisará ter a versão v20.19.2 do NODE, e do JAVA 17.
+Para realizar os testes como usuário, crie um novo usuário a partir da conta de administrador: admin@taskmanager.com (senha: admin123).
+Para executar o projeto, é necessário ter instalado o Node.js na versão 20.19.2 e o Java na versão 17.
+Adicione a pasta principal do projeto (/ProjetoFinal-dev/taskmanager) no recurso "File Share" do Docker Desktop, para que o projeto seja localizado corretamente.
+Acesse a URL do frontend utilizando uma guia anônima no navegador.
